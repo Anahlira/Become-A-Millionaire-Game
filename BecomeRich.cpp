@@ -4,6 +4,7 @@
 #include <stdlib.h> // rand
 #include <unistd.h> // sleep
 #include <ctime>    //srand
+#include <conio.h>
 
 using namespace std;
 
@@ -15,14 +16,76 @@ struct Question {
 	string ans3;
 };
 
+void LetterByLetter(string text, int time = 0);
 void Border(int characterBorder = 32);
-void AlineCenter (string text, int characterBorder1 = 32, int characterBorder2 = 32, int character = 32);
+void AlineCenter (string text, int characterBorder1 = 32, int characterBorder2 = 32,int time = 0, int character = 32);
 
-int DifrentHardnesses (ifstream& category, int currentHardnesL);
+int DifrentDifficulties (ifstream& category, int currentHardnesL);
 string getAnswers (string line, int& i);
 void ShowAnswer (string ans1, string ans2, int characterBorder1 = 32, int characterBorder2 = 32, int choice1 = 1, int choice2 = 2);
 void ShowQuestion (int& i, string line, int& trueAnswer, Question &q);
 void UserInput (int& userAnswer, int minValue = 1, int maxValue = 4);
+
+void NextQuestion (ifstream& categoryFile, bool isCategoryRandom, string& chosedCategory, int row) {
+    system("CLS");
+
+    //chose random category
+    if(isCategoryRandom) {
+        if(categoryFile.is_open())
+            categoryFile.close();
+
+        fstream categoryAll;
+        categoryAll.open("AllCategories.txt", ios::in);
+
+        int chosedCateggoryN = 0;
+        chosedCateggoryN = rand() % row + 1;
+        int currentRow = 1;
+
+        string line;
+        while (getline(categoryAll, line)) {
+            if(currentRow == chosedCateggoryN) {
+                chosedCategory = line + ".txt";
+                break;
+            }
+            currentRow++;
+        }
+
+        categoryAll.close();
+    }
+
+    //open file
+    if(!categoryFile.is_open()) {
+            categoryFile.open(chosedCategory, ios::in);
+        }
+}
+
+void NextDifficulty (int question, int& difficulty) {
+    if(question == 2 || question == 4 || question == 11 || question == 13 || question == 15) {
+        return ;
+    }
+    else difficulty++;
+    return;
+}
+
+void Win (int& reward, int question) {
+    if(question == 5) {
+        reward = 1000;
+        return ;
+    }
+
+    if(question == 12){
+        reward = 125000;
+        return ;
+    }
+
+    if(question > 5){
+        reward = reward*2;
+        return ;
+    }
+
+    reward = reward + 100;
+    return;
+}
 
 int main() {
 
@@ -32,13 +95,17 @@ int main() {
     Border(220);
     Border(220);
     cout<<endl;
-    AlineCenter("GET SOME MONEY");
+    AlineCenter("GET SOME MONEY", 32, 32, 90000);
     cout<<endl<<endl;
 
     AlineCenter("New game");
+    sleep(1);
     AlineCenter("New question");
+    sleep(1);
     AlineCenter("Change question");
+    sleep(1);
     AlineCenter("Exit");
+    sleep(1);
     cout<<endl<<endl;
     Border(223);
     Border(223);
@@ -63,7 +130,8 @@ int main() {
     string line;
 
     //....................Category......................//
-    int chosedCateggoryN = 0;
+
+    //Show categories ...........
     Border(220);
 
     fstream categoryAll;
@@ -84,16 +152,24 @@ int main() {
 
     Border(223);
 
+    //Select the category ...........
+    int currentRow = 1;
+    string chosedCategory;
+    bool isCategoryRandom = false;
+    int chosedCateggoryN = 0;
+
     UserInput(chosedCateggoryN, 1, row);
 
-    int rowC = 1;
-    string chosedCategory;
-    while (getline(categoryAll, line)) {
-        if(rowC == chosedCateggoryN) {
-            chosedCategory = line + ".txt";
-            break;
+    if(chosedCateggoryN != 6) {
+        while (getline(categoryAll, line)) {
+            if(currentRow == chosedCateggoryN) {
+                chosedCategory = line + ".txt";
+                break;
+            }
+            currentRow++;
         }
     }
+    else isCategoryRandom = true;
 
     categoryAll.close();
     //..................................................//
@@ -103,71 +179,111 @@ int main() {
     //....................New Game......................//
 
     Question q;
-    int hardnesLevel = 49;
-    int numberHardnesses = 2;
+    int difficultyLevel = 47;
+    int numberDifficulties = 2;
+
     int trueAnswer = 0;
     int userAnswer = 0;
-    int reward = 100;
 
+    int ownMoney = 0;
+    int reward = 0;
 
     srand((unsigned int)time(NULL));// for more precise random number
 
     ifstream categoryFile;
-    categoryFile.open(chosedCategory, ios::in);
+    for (int currentQ = 1; currentQ < 16; currentQ++) {
+        NextQuestion(categoryFile, isCategoryRandom, chosedCategory, row);
+        NextDifficulty(currentQ, difficultyLevel);
+        Win(reward, currentQ);
 
-    if (categoryFile.is_open()) {
-        numberHardnesses = DifrentHardnesses(categoryFile, hardnesLevel);
-
-        int randomQuest = rand() % numberHardnesses; //choses one question
+        numberDifficulties = DifrentDifficulties(categoryFile, difficultyLevel);
+        int randomQuest = rand() % numberDifficulties; //choses one question
         int currentLine = 0; // track current question
 
-        while (getline(categoryFile, line)) {
-            int quetionHardness = line[0];
+        if(categoryFile.is_open()) {
+            while (getline(categoryFile, line)) {
+                int quetionHardness = line[0];
 
-            if (quetionHardness == hardnesLevel) {
-                if(currentLine == randomQuest) {
-                    int i = 2;
+                if (quetionHardness == difficultyLevel) {
+                    if(currentLine == randomQuest) {
+                        int i = 2;
 
-                    ShowQuestion(i, line, trueAnswer, q);                           //Question display
-                    AlineCenter("Please enter your answer.(Use only numbers!!)");
-                    UserInput(userAnswer);
-
-                    if(userAnswer == trueAnswer && hardnesLevel<57) {
-                        system("CLS");
-                        hardnesLevel++;
-                        currentLine = 0;
-                        categoryFile.clear();
-                        categoryFile.seekg(0);
-                    }
-                    else {
-                        system("CLS");
+                        //.........Question display.........//
                         Border(220);
-                        for(int i = 0; i < 5 ; i++) {
-                            AlineCenter(".", 221, 222);
+
+                        AlineCenter(to_string(reward), 221, 222);
+
+                        //Border(223);
+
+                        ShowQuestion(i, line, trueAnswer, q);
+                        AlineCenter("Please enter your answer.(Use only numbers!!)");
+                        UserInput(userAnswer);
+
+                        if(userAnswer == trueAnswer) {
+                            ownMoney = reward;
+                            currentLine = 0;
+                            break;
                         }
 
-                        AlineCenter("The game ends here.", 221, 222);
-                        string rewardSt;
-                        rewardSt = "You won: " + to_string(reward);
-                        AlineCenter(rewardSt, 221, 222);
+                        //............lost game.............//
+                        else {
+                            system("CLS");
+                            Border(220);
+                            for(int i = 0; i < 5 ; i++) {
+                                AlineCenter(".", 221, 222);
+                            }
 
-                        for(int i = 0; i < 5 ; i++) {
-                            AlineCenter(".", 221, 222);
+                            AlineCenter("The game ends here.", 221, 222);
+                            string rewardSt;
+                            rewardSt = "You won: " + to_string(ownMoney);
+                            AlineCenter(rewardSt, 221, 222);
+
+                            for(int i = 0; i < 5 ; i++) {
+                                AlineCenter(".", 221, 222);
+                            }
+
+                            Border(223);
+
+                            cout<<endl;
+                            AlineCenter("Press any key to exit...");
+                            getch();
+
+                            if(categoryFile.is_open())
+                                categoryFile.close();
+                            return 0;
                         }
-
-                        Border(223);
-                        break;
-                    }
                 }
                 else currentLine++;
             }
+            }
         }
-    }
-    else {
-        cout << "An error has ocure during the opening of the file!" << endl;
+        else cout << "An error has ocure during the opening of the file!" << endl;
     }
 
-    categoryFile.close();
+    //................congrats screen..............//
+    system("CLS");
+    Border(220);
+    for(int i = 0; i < 5 ; i++) {
+        AlineCenter(".", 221, 222);
+    }
+
+    AlineCenter("You won the game!!!", 221, 222);
+    string rewardSt;
+    rewardSt = "Reward: " + to_string(ownMoney);
+    AlineCenter(rewardSt, 221, 222);
+
+    for(int i = 0; i < 5 ; i++) {
+        AlineCenter(".", 221, 222);
+    }
+
+    Border(223);
+
+    cout<<endl;
+    AlineCenter("Press any key to exit...");
+    getch();
+
+    if(categoryFile.is_open())
+        categoryFile.close();
 
     return 0;
 }
@@ -175,8 +291,15 @@ int main() {
 
 
 
+void LetterByLetter(const string text, int time) {
+    for(int i = 0; i < text.length(); i++) {
+        cout<<text[i];
+        usleep(time);
+    }
+    return;
+}
 
-void AlineCenter (string text, int characterBorder1, int characterBorder2, int character) {
+void AlineCenter (string text, int characterBorder1, int characterBorder2, int time, int character) {
     int length = text.length();
     char st[3];
     st[0] = character;
@@ -188,7 +311,7 @@ void AlineCenter (string text, int characterBorder1, int characterBorder2, int c
     for(int i = 0; i < (68 - length)/2; i++) {
         cout<< st[0];
     }
-    cout<<text;
+    LetterByLetter(text, time);
 
     for(int i = 0; i < (69 - length)/2; i++) {
         cout<< st[0];
@@ -212,7 +335,10 @@ void Border(int characterBorder) {
 
 
 //calculates how many of 1 hardness level is there
-int DifrentHardnesses (ifstream& category, int currentHardnesL) {
+int DifrentDifficulties (ifstream& category, int currentHardnesL) {
+    category.clear();
+    category.seekg(0);
+
     string line;
     int numHardnesses = 0;
     while (getline(category, line)) {
@@ -265,8 +391,8 @@ void ShowQuestion (int& i, string line, int& trueAnswer, Question &q) {
         sentance = sentance + line[i];
         i++;
     }
-    q.question = sentance + '?';
-    AlineCenter(sentance, 221, 222);
+    q.question = sentance + "?";
+    AlineCenter(q.question, 221, 222, 50000);
 
     Border(223);
 

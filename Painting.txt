@@ -1,11 +1,17 @@
-0.Who painted "Mona Lisa"?Leo/Thor/My boyfriend/Someone in the croud/
-0.Another 1?1/2/38/4/
-1.this is second?2/3/4/5/
-2.this is third?3/4/5/6/
-3.four?4/5/6/7/
-4.five?5/6/7/8/
-5.six?6/7/8/9/
-6.seven?7/1/2/3/
-7.eigh?8/1/2/3/
-8.nine?9/1/2/3/
-9.some?10/1/2/3/
+/01016/
+0.01001/Who painted "Mona Lisa"?Leonardo da Vinci/Thor/Boiko Borisov/Britney Spears/
+0.01002/How to get green color?blue + yellow/red + blue/you can't/black + white/
+1.01003/What represent the picture, titled "The Scream", by Edvard Munch?An screeaming man/3/4/5/
+2.01004/this is third?true/4/5/6/
+3.01005/four?true/5/6/7/
+4.01006/Which painting, from Jean-Michel Basquiat, costs  $110.5 Million?Untitled/6/7/8/
+5.01007/six?true/7/8/9/
+6.01008/seven?true/1/2/3/
+6.010016/seven2?true/1/2/3/
+7.01009/eigh?true/1/2/3/
+7.01010/eigh2?true/1/2/3/
+8.01011/nine?true/1/2/3/
+8.01012/nine2?true/1/2/3/
+9.01013/some?true/1/2/3/
+9.01014/My question is wjy is it so hard?Uni/cats/dogos/cyberpunck/
+1.01015/Gde e vitosha bre?tam/4/4/kiko/

@@ -18,94 +18,48 @@ struct Question {
 
 void LetterByLetter(string text, int time = 0);
 void Border(int characterBorder = 32);
+void NewScreen(int border = 220);
 void AlineCenter (string text, int characterBorder1 = 32, int characterBorder2 = 32,int time = 0, int character = 32);
 
+//string IDToString(string line, int& i = 2);
 int DifrentDifficulties (ifstream& category, int currentHardnesL);
 string getAnswers (string line, int& i);
 void ShowAnswer (string ans1, string ans2, int characterBorder1 = 32, int characterBorder2 = 32, int choice1 = 1, int choice2 = 2);
 void ShowQuestion (int& i, string line, int& trueAnswer, Question &q);
-void UserInput (int& userAnswer, int minValue = 1, int maxValue = 4);
+void UserInput (int& userAnswer, int minValue = 1, int maxValue = 4, int center = 35);
+void NextQuestion (ifstream& categoryFile, int chosedCategoryN, string& chosedCategory, int row);
+void NextDifficulty (int question, int& difficulty);
+void Win (int& reward, int question);
 
-void NextQuestion (ifstream& categoryFile, bool isCategoryRandom, string& chosedCategory, int row) {
-    system("CLS");
+void NewQuestion (Question &q);
+void ChangeQuestion();
 
-    //chose random category
-    if(isCategoryRandom) {
-        if(categoryFile.is_open())
-            categoryFile.close();
 
-        fstream categoryAll;
-        categoryAll.open("AllCategories.txt", ios::in);
-
-        int chosedCateggoryN = 0;
-        chosedCateggoryN = rand() % row + 1;
-        int currentRow = 1;
-
-        string line;
-        while (getline(categoryAll, line)) {
-            if(currentRow == chosedCateggoryN) {
-                chosedCategory = line + ".txt";
-                break;
-            }
-            currentRow++;
-        }
-
-        categoryAll.close();
-    }
-
-    //open file
-    if(!categoryFile.is_open()) {
-            categoryFile.open(chosedCategory, ios::in);
-        }
-}
-
-void NextDifficulty (int question, int& difficulty) {
-    if(question == 2 || question == 4 || question == 11 || question == 13 || question == 15) {
-        return ;
-    }
-    else difficulty++;
-    return;
-}
-
-void Win (int& reward, int question) {
-    if(question == 5) {
-        reward = 1000;
-        return ;
-    }
-
-    if(question == 12){
-        reward = 125000;
-        return ;
-    }
-
-    if(question > 5){
-        reward = reward*2;
-        return ;
-    }
-
-    reward = reward + 100;
-    return;
-}
 
 int main() {
+    Question q;
 
-    //....................Main menu.....................//
+    //...................................Main menu........................................//
     int choice = 0;
+    bool newGame = false;
 
+    while (!newGame) {
+    NewScreen(220);
     Border(220);
-    Border(220);
-    cout<<endl;
-    AlineCenter("GET SOME MONEY", 32, 32, 90000);
-    cout<<endl<<endl;
+
+    cout << endl;
+    AlineCenter("GET SOME MONEY", 32, 32);//, 90000);
+    cout << endl << endl;
 
     AlineCenter("New game");
-    sleep(1);
+    //sleep(1);
     AlineCenter("New question");
-    sleep(1);
+    //sleep(1);
     AlineCenter("Change question");
-    sleep(1);
+    //sleep(1);
     AlineCenter("Exit");
-    sleep(1);
+    //sleep(1);
+
     cout<<endl<<endl;
     Border(223);
     Border(223);
@@ -113,26 +67,28 @@ int main() {
     UserInput(choice);
 
     switch (choice) {
+        case 1:
+            newGame = true;
+            break;
         case 2:
-
+            NewQuestion(q);
             break;
         case 3:
-
+            ChangeQuestion();
             break;
         case 4:
             return 0;
             break;
     }
+    }
+    //....................................................................................//
 
-    //..................................................//
-
-    system("CLS");
+    NewScreen();
     string line;
 
-    //....................Category......................//
+    //...................................Category.........................................//
 
     //Show categories ...........
-    Border(220);
 
     fstream categoryAll;
     categoryAll.open("AllCategories.txt", ios::in);
@@ -155,12 +111,11 @@ int main() {
     //Select the category ...........
     int currentRow = 1;
     string chosedCategory;
-    bool isCategoryRandom = false;
-    int chosedCateggoryN = 0;
+    int chosedCateggoryN = 1;
 
     UserInput(chosedCateggoryN, 1, row);
 
-    if(chosedCateggoryN != 6) {
+    if(chosedCateggoryN != row) {
         while (getline(categoryAll, line)) {
             if(currentRow == chosedCateggoryN) {
                 chosedCategory = line + ".txt";
@@ -169,18 +124,17 @@ int main() {
             currentRow++;
         }
     }
-    else isCategoryRandom = true;
 
     categoryAll.close();
-    //..................................................//
+    //.....................................................................................//
 
     system("CLS");
 
-    //....................New Game......................//
+    //....................................New Game.........................................//
 
-    Question q;
     int difficultyLevel = 47;
     int numberDifficulties = 2;
+    int showedQuestions[15][1] = {0};
 
     int trueAnswer = 0;
     int userAnswer = 0;
@@ -192,26 +146,52 @@ int main() {
 
     ifstream categoryFile;
     for (int currentQ = 1; currentQ < 16; currentQ++) {
-        NextQuestion(categoryFile, isCategoryRandom, chosedCategory, row);
+
+        NextQuestion(categoryFile, chosedCateggoryN, chosedCategory, row);
         NextDifficulty(currentQ, difficultyLevel);
         Win(reward, currentQ);
 
         numberDifficulties = DifrentDifficulties(categoryFile, difficultyLevel);
-        int randomQuest = rand() % numberDifficulties; //choses one question
-        int currentLine = 0; // track current question
+        //unfinished category
+        if(numberDifficulties < 1) {
+            categoryFile.close();
+            return 0;
+        }
 
-        if(categoryFile.is_open()) {
+        //............chose the question.............//
+        bool foundQuestion = false;
+
+        while(!foundQuestion) {
+
+            int randomQuest = rand() % numberDifficulties; //choses one question
+            int currentLine = 0; // track current question
+
+            if(!categoryFile.is_open()) {
+                cout << "An error has ocurre during the opening of the file!" << endl;
+                return 0;
+            }
+
             while (getline(categoryFile, line)) {
                 int quetionHardness = line[0];
 
                 if (quetionHardness == difficultyLevel) {
                     if(currentLine == randomQuest) {
                         int i = 2;
+                        for(i; line[i] != '/'; i++) {
+                            //currentID[i-2] = line[i];
+                        }
+                        i++;
+
+                        if(showedQuestions[difficultyLevel-47][0] == randomQuest + 1) {
+                            foundQuestion = false;
+                            break;
+                        }
+                        else foundQuestion = true;
 
                         //.........Question display.........//
                         Border(220);
 
-                        AlineCenter(to_string(reward), 221, 222);
+                        AlineCenter("Reward for the round: " + to_string(reward));
 
                         //Border(223);
 
@@ -219,24 +199,34 @@ int main() {
                         AlineCenter("Please enter your answer.(Use only numbers!!)");
                         UserInput(userAnswer);
 
+                        //............won round............//
                         if(userAnswer == trueAnswer) {
+                            showedQuestions[difficultyLevel-47][0] = randomQuest + 1;
                             ownMoney = reward;
                             currentLine = 0;
+
+                            NewScreen();
+
+                            AlineCenter("Congrats, you won: " + to_string(ownMoney));
+                            cout<<endl;
+                            AlineCenter("Press any key to continue...");
+
+                            Border(223);
+                            getch();
+                            system("CLS");
+
                             break;
                         }
 
                         //............lost game.............//
                         else {
-                            system("CLS");
-                            Border(220);
+                            NewScreen();
                             for(int i = 0; i < 5 ; i++) {
                                 AlineCenter(".", 221, 222);
                             }
 
-                            AlineCenter("The game ends here.", 221, 222);
-                            string rewardSt;
-                            rewardSt = "You won: " + to_string(ownMoney);
-                            AlineCenter(rewardSt, 221, 222);
+                            AlineCenter("The true answer was: " + to_string(trueAnswer) + q.trueAns, 221, 222);
+                            AlineCenter("You won: " + to_string(ownMoney), 221, 222);
 
                             for(int i = 0; i < 5 ; i++) {
                                 AlineCenter(".", 221, 222);
@@ -252,17 +242,17 @@ int main() {
                                 categoryFile.close();
                             return 0;
                         }
+                    }
+                    else currentLine++;
                 }
-                else currentLine++;
             }
-            }
+        categoryFile.clear();
+        categoryFile.seekg(0);
         }
-        else cout << "An error has ocure during the opening of the file!" << endl;
     }
 
     //................congrats screen..............//
-    system("CLS");
-    Border(220);
+    NewScreen();
     for(int i = 0; i < 5 ; i++) {
         AlineCenter(".", 221, 222);
     }
@@ -333,6 +323,12 @@ void Border(int characterBorder) {
     return;
 }
 
+void NewScreen(int border) {
+    system("CLS");
+    Border(220);
+    return;
+}
+
 
 //calculates how many of 1 hardness level is there
 int DifrentDifficulties (ifstream& category, int currentHardnesL) {
@@ -351,6 +347,14 @@ int DifrentDifficulties (ifstream& category, int currentHardnesL) {
     //return to first line
     category.clear();
     category.seekg(0);
+
+    if(numHardnesses < 1) {
+            cout << "Upss... It seems that you did't finish a category" << endl;
+            cout << "Please finish your category, it should have at least 2 questions from every difficulty level." << endl;
+            cout << "This message will continue to show, until you complete your category!" << endl;
+            cout << "Hope you make a lot of money next time!" << endl;
+            system ("pause");
+        }
 
     return numHardnesses;
 }
@@ -425,12 +429,12 @@ void ShowQuestion (int& i, string line, int& trueAnswer, Question &q) {
     Border(220);
 }
 
-void UserInput (int& userAnswer, int minValue, int maxValue) {
+void UserInput (int& userAnswer, int minValue, int maxValue, int center) {
     string invalid;
     invalid = "Enter only numbers between " + to_string(minValue) + " and " + to_string(maxValue) + "!";
     while(true) {
-        cout << endl;
-        for(int i = 0; i < 35; i++) cout<< " ";
+        //cout << endl;
+        for(int i = 0; i < center; i++) cout<< " ";
         cin>>userAnswer;
 
         if(userAnswer >= minValue && userAnswer <= maxValue) break;
@@ -439,5 +443,78 @@ void UserInput (int& userAnswer, int minValue, int maxValue) {
         cin.clear();
         cin.ignore();
     }
+    return ;
+}
+
+void NextQuestion (ifstream& categoryFile, int chosedCategoryN, string& chosedCategory, int row) {
+    system("CLS");
+
+    //chose random category
+    if(chosedCategoryN == row) {
+        if(categoryFile.is_open())
+            categoryFile.close();
+
+        row--;
+        fstream categoryAll;
+        categoryAll.open("AllCategories.txt", ios::in);
+
+        int chosedCateggoryN = 0;
+        chosedCateggoryN = rand() % row + 1;
+        int currentRow = 1;
+
+        string line;
+        while (getline(categoryAll, line)) {
+            if(currentRow == chosedCateggoryN) {
+                chosedCategory = line + ".txt";
+                break;
+            }
+            currentRow++;
+        }
+
+        categoryAll.close();
+    }
+
+    //open file
+    if(!categoryFile.is_open()) {
+            categoryFile.open(chosedCategory, ios::in);
+        }
+}
+
+void NextDifficulty (int question, int& difficulty) {
+    if(question == 2 || question == 4 || question == 11 || question == 13 || question == 15) {
+        return ;
+    }
+    else difficulty++;
+    return;
+}
+
+void Win (int& reward, int question) {
+    if(question == 5) {
+        reward = 1000;
+        return ;
+    }
+
+    if(question == 12){
+        reward = 125000;
+        return ;
+    }
+
+    if(question > 5){
+        reward = reward*2;
+        return ;
+    }
+
+    reward = reward + 100;
+    return;
+}
+
+void NewQuestion (Question &q) {
+
+    return;
+}
+
+void ChangeQuestion() {
+    cout << "one day you will have the chance...";
+    system("pause");
     return ;
 }

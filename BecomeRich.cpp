@@ -17,19 +17,257 @@ struct Question {
 };
 
 void LetterByLetter(string text, int time = 0);
-void Border(int characterBorder = 32);
+void Border(int characterBorder = 32, int length = 70);
+void BorderC(int characterBorder = 32, int characterBorderB = 32, int characterBorderE = 32);
 void NewScreen(int border = 220);
-void AlineCenter (string text, int characterBorder1 = 32, int characterBorder2 = 32,int time = 0, int character = 32);
+void AlignCenter (string text, int characterBorder1 = 32, int characterBorder2 = 32,int time = 0, int character = 32);
+void AlignLeft (string text, int characterBorder1 = 32, int characterBorder2 = 32,int time = 0, int character = 32);
+void WaitUser (string text, bool center = 1, int border = 32) {
+    if(center) {
+        AlignCenter(text, border, border);
+        Border(border);
+    }
+    else {
+        Border(border);
+        AlignLeft(text, border, border);
+        Border(border);
+        //system("pause");
+        //return;
+    }
+    getch();
+    return;
+}
 
-//string IDToString(string line, int& i = 2);
 int DifrentDifficulties (ifstream& category, int currentHardnesL);
 string getAnswers (string line, int& i);
+void CollectQuestion(int i, string line, Question &q);
 void ShowAnswer (string ans1, string ans2, int characterBorder1 = 32, int characterBorder2 = 32, int choice1 = 1, int choice2 = 2);
-void ShowQuestion (int& i, string line, int& trueAnswer, Question &q);
+void ShowQuestion (int& trueAnswer, Question &q);
 void UserInput (int& userAnswer, int minValue = 1, int maxValue = 4, int center = 35);
 void NextQuestion (ifstream& categoryFile, int chosedCategoryN, string& chosedCategory, int row);
 void NextDifficulty (int question, int& difficulty);
 void Win (int& reward, int question);
+
+void ShowReward(int reward);
+void ShowLifelines (bool lifelines[]){
+    AlignLeft ("Available lifeline: ");
+    Border();
+    if(lifelines[0]) {
+        AlignLeft ("[1] 50/50");
+        cout << endl;
+    }
+    if(lifelines[1]) {
+        AlignLeft ("[2] Call your friend");
+        cout << endl;
+    }
+    if(lifelines[2]) {
+        AlignLeft ("[3] Help from the audience");
+        cout << endl;
+    }
+    Border();
+    return;
+}
+
+int GuessTheAnsewer(int difficulty) {
+    int random = rand() % 100 + 1;
+    difficulty = difficulty - 47;
+    if (difficulty >=0 && difficulty < 3) {
+        if(random > 0 && random < 81)
+            return 4;
+        else return rand() % 3 + 1;
+    }
+    else  if (difficulty >=4 && difficulty < 6) {
+        if(random > 0 && random < 61)
+            return 4;
+        else return rand() % 3 + 1;
+    }
+    else {
+        if(random > 0 && random < 31)
+            return 4;
+        else return rand() % 3 + 1;
+    }
+}
+
+void ActivateLifeline(int userAnswer, int difficulty, Question &q){
+
+    string friendName = "My friend";
+    int random = rand() % 3 + 1;
+    int randomP = 0; //to save the first eliminated answer
+
+    int helpAnswer = GuessTheAnsewer(difficulty);
+    string answer;
+    if(helpAnswer == 1) answer = q.ans1;
+    else if(helpAnswer == 2) answer = q.ans2;
+    else if(helpAnswer == 3) answer = q.ans3;
+    else answer = q.trueAns;
+
+    switch(userAnswer) {
+        case 1:
+            for(int i = 0; i < 2; i++) {
+                if (random == 1)
+                    q.ans1 = " ";
+                if (random == 2)
+                    q.ans2 = " ";
+                if (random == 3)
+                    q.ans3 = " ";
+                randomP = random;
+                random = rand() % 3 + 1;
+                while(random == randomP) {
+                    random = rand() % 3 + 1;
+                }
+            }
+            system("CLS");
+            break;
+
+        case 2:
+            NewScreen(220);
+            AlignLeft("Who do you wanna call: ", 32);
+            cin.ignore();
+            getline(cin, friendName);
+            NewScreen();
+            AlignCenter("Calling " + friendName);
+            AlignCenter(". . . . .", 32, 32, 300000);
+
+            NewScreen(220);
+            BorderC(32, 221, 222);
+            AlignCenter("Pres any key to continue the conversation.", 221, 222);
+            BorderC(32, 221, 222);
+            Border(223);
+
+            WaitUser(friendName + ": Hello? What's up? Need help?", 0);
+            WaitUser("Yes. " + q.question, 0);
+            WaitUser(friendName + ": Just... Let me think for a second.", 0);
+            Border();
+            AlignLeft("Waiting...", 32, 32, 80000);
+            Border();
+            WaitUser(friendName + ": Ok, I think it is " + answer, 0);
+            system("CLS");
+            Border();
+            AlignCenter(friendName + " thinks the true answer is " + answer);
+            break;
+
+        case 3:
+            char st[1];
+            st[0] = 220;
+
+            //....percentage of the vote....//
+            string a,b,c,d;
+            a = q.trueAns;
+            b = q.ans1;
+            c = q.ans2;
+            d = q.ans3;
+            switch (rand() % 4 + 1) {
+            case 1:
+                a = q.ans1;
+                b = q.trueAns;
+                break;
+            case 2:
+                a = q.ans2;
+                c = q.trueAns;
+                break;
+            case 3:
+                a = q.ans3;
+                d = q.trueAns;
+                break;
+            case 4://to keep the first values
+                break;
+            }
+            string answerS[4] = {a, b, c, d};
+
+            int percentage = 0;
+            int usePr[3];
+            int longestAns = 0;
+            int randMax = 0;
+
+            for (int j = 0; j < 4; j++) {
+                if(answerS[j].length() > longestAns)
+                    longestAns = answerS[j].length();
+            }
+
+            //....percentage of the vote....//
+            if(difficulty < 4) {
+                percentage = rand() % 12 + 15;
+            }
+            else percentage = rand() % 3 + 15;
+            randMax = 31 - percentage;
+
+            usePr[0] = rand() % randMax/2 + 1;
+            randMax = randMax - usePr[0];
+
+            if(randMax > 0) {
+                usePr[1] = rand() % randMax + 1;
+                randMax = randMax - usePr[1];
+                if (randMax > 0) {
+                    usePr[2] = rand() % randMax + 1;
+                }
+                else usePr[2] = 0;
+            }
+            else  usePr[1] = 0;
+
+            //-------- show pow lines----------//
+            system("CLS");
+            AlignLeft("         Audience poll"); //spaces are for visuals
+            Border();
+            Border();
+            int z = 0;
+
+            for(int j = 0; j < 4; j++) {
+                if(answerS[j] == answer) {
+                    cout << answer << ": ";
+                    for(int i = answer.length(); i < longestAns; i++)
+                        cout << " ";
+
+                    Border(220, percentage);
+                }
+                else {
+                    cout << answerS[j] << ": ";
+                    for(int i = answerS[j].length(); i < longestAns; i++)
+                        cout << " ";
+
+                    Border(220, usePr[z]);
+                    z++;
+                }
+            }
+            //----------------------------------//
+            Border();
+            break;
+        }
+
+    return;
+}
+bool ChooseLifeline (bool lifelines[], int& userAnswer) {
+    string llInput;
+    while(true) {
+        cin >> llInput;
+        if(llInput == "y" || llInput == "Y") {
+            NewScreen(31);
+
+            ShowLifelines(lifelines);
+            while(true) {
+                AlignLeft("What would you like to use:");
+                cin >> userAnswer;
+                if(userAnswer == 1 && lifelines[0] == 1) {
+                    lifelines[0] = 0;
+                    break;
+                }
+                else if(userAnswer == 2 && lifelines[1] == 1) {
+                    lifelines[1] = 0;
+                    break;
+                }
+                else if(userAnswer == 3 && lifelines[2] == 1) {
+                    lifelines[2] = 0;
+                    break;
+                }
+                cin.clear();
+                cin.ignore();
+            }
+            break;
+        }
+        if(llInput == "n" || llInput == "N")
+            return 0;
+    }
+    return 1;
+}
 
 void NewQuestion (Question &q);
 void ChangeQuestion();
@@ -44,42 +282,42 @@ int main() {
     bool newGame = false;
 
     while (!newGame) {
-    NewScreen(220);
-    Border(220);
+        NewScreen(220);
+        Border(220);
 
-    cout << endl;
-    AlineCenter("GET SOME MONEY", 32, 32);//, 90000);
-    cout << endl << endl;
+        Border();
+        AlignCenter("GET SOME MONEY", 32, 32);//, 90000);
+        cout << endl << endl;
 
-    AlineCenter("New game");
-    //sleep(1);
-    AlineCenter("New question");
-    //sleep(1);
-    AlineCenter("Change question");
-    //sleep(1);
-    AlineCenter("Exit");
-    //sleep(1);
+        AlignCenter("New game");
+        //sleep(1);
+        AlignCenter("New question");
+        //sleep(1);
+        AlignCenter("Change question");
+        //sleep(1);
+        AlignCenter("Exit");
+        //sleep(1);
 
-    cout<<endl<<endl;
-    Border(223);
-    Border(223);
+        cout<<endl<<endl;
+        Border(223);
+        Border(223);
 
-    UserInput(choice);
+        UserInput(choice);
 
-    switch (choice) {
-        case 1:
-            newGame = true;
-            break;
-        case 2:
-            NewQuestion(q);
-            break;
-        case 3:
-            ChangeQuestion();
-            break;
-        case 4:
-            return 0;
-            break;
-    }
+        switch (choice) {
+            case 1:
+                newGame = true;
+                break;
+            case 2:
+                NewQuestion(q);
+                break;
+            case 3:
+                ChangeQuestion();
+                break;
+            case 4:
+                return 0;
+                break;
+        }
     }
     //....................................................................................//
 
@@ -89,6 +327,7 @@ int main() {
     //...................................Category.........................................//
 
     //Show categories ...........
+    BorderC(32, 221, 222);
 
     fstream categoryAll;
     categoryAll.open("AllCategories.txt", ios::in);
@@ -97,15 +336,16 @@ int main() {
     string rowLine;
     while (getline(categoryAll, line)) {
         rowLine = to_string(row) + "." + line;
-        AlineCenter(rowLine, 221, 222);
+        AlignCenter(rowLine, 221, 222);
         row++;
     }
     rowLine = to_string(row) + ".All Categories";
-    AlineCenter(rowLine, 221, 222);
+    AlignCenter(rowLine, 221, 222);
 
     categoryAll.clear();
     categoryAll.seekg(0);
 
+    BorderC(32, 221, 222);
     Border(223);
 
     //Select the category ...........
@@ -142,6 +382,9 @@ int main() {
     int ownMoney = 0;
     int reward = 0;
 
+    bool lifelines[3] = {1, 1, 1};
+    //string llInput; //yes or no
+
     srand((unsigned int)time(NULL));// for more precise random number
 
     ifstream categoryFile;
@@ -177,9 +420,7 @@ int main() {
                 if (quetionHardness == difficultyLevel) {
                     if(currentLine == randomQuest) {
                         int i = 2;
-                        for(i; line[i] != '/'; i++) {
-                            //currentID[i-2] = line[i];
-                        }
+                        while(line[i] != '/') i++;
                         i++;
 
                         if(showedQuestions[difficultyLevel-47][0] == randomQuest + 1) {
@@ -188,18 +429,27 @@ int main() {
                         }
                         else foundQuestion = true;
 
-                        //.........Question display.........//
-                        Border(220);
+//.......................Question display......................//
 
-                        AlineCenter("Reward for the round: " + to_string(reward));
 
-                        //Border(223);
+                        CollectQuestion(i, line, q);
+                        ShowReward(reward);
+                        ShowQuestion(trueAnswer, q);
+                        if (lifelines[0] == 1 || lifelines[1] == 1 || lifelines[2] == 1) { //check if the player have lifelines
+                            ShowLifelines(lifelines);
+                            AlignLeft("Would you like to use a lifeline ([y] yes : [n] no): ");
+                            if(ChooseLifeline(lifelines, userAnswer)) {
+                                ActivateLifeline(userAnswer, difficultyLevel, q);
+                                ShowReward(reward);
+                                ShowQuestion(trueAnswer, q);
+                            }
+                        }
 
-                        ShowQuestion(i, line, trueAnswer, q);
-                        AlineCenter("Please enter your answer.(Use only numbers!!)");
+                        Border();
+                        AlignCenter ("Please enter your answer.(Use only numbers!!)");
                         UserInput(userAnswer);
 
-                        //............won round............//
+//............................WON ROUND..............................//
                         if(userAnswer == trueAnswer) {
                             showedQuestions[difficultyLevel-47][0] = randomQuest + 1;
                             ownMoney = reward;
@@ -207,9 +457,9 @@ int main() {
 
                             NewScreen();
 
-                            AlineCenter("Congrats, you won: " + to_string(ownMoney));
-                            cout<<endl;
-                            AlineCenter("Press any key to continue...");
+                            AlignCenter("Congrats, you won: " + to_string(ownMoney));
+                            Border();
+                            AlignCenter("Press any key to continue...");
 
                             Border(223);
                             getch();
@@ -218,24 +468,24 @@ int main() {
                             break;
                         }
 
-                        //............lost game.............//
+//...........................LOST GAME........................,.....//
                         else {
                             NewScreen();
                             for(int i = 0; i < 5 ; i++) {
-                                AlineCenter(".", 221, 222);
+                                AlignCenter(".", 221, 222);
                             }
 
-                            AlineCenter("The true answer was: " + to_string(trueAnswer) + q.trueAns, 221, 222);
-                            AlineCenter("You won: " + to_string(ownMoney), 221, 222);
+                            AlignCenter("The true answer was: " + to_string(trueAnswer) + ")" + q.trueAns, 221, 222);
+                            AlignCenter("You won: " + to_string(ownMoney), 221, 222);
 
                             for(int i = 0; i < 5 ; i++) {
-                                AlineCenter(".", 221, 222);
+                                AlignCenter(".", 221, 222);
                             }
 
                             Border(223);
 
                             cout<<endl;
-                            AlineCenter("Press any key to exit...");
+                            AlignCenter("Press any key to exit...");
                             getch();
 
                             if(categoryFile.is_open())
@@ -251,25 +501,26 @@ int main() {
         }
     }
 
-    //................congrats screen..............//
+    //............................congrats screen.................................//
+
     NewScreen();
     for(int i = 0; i < 5 ; i++) {
-        AlineCenter(".", 221, 222);
+        AlignCenter(".", 221, 222);
     }
 
-    AlineCenter("You won the game!!!", 221, 222);
+    AlignCenter("You won the game!!!", 221, 222);
     string rewardSt;
     rewardSt = "Reward: " + to_string(ownMoney);
-    AlineCenter(rewardSt, 221, 222);
+    AlignCenter(rewardSt, 221, 222);
 
     for(int i = 0; i < 5 ; i++) {
-        AlineCenter(".", 221, 222);
+        AlignCenter(".", 221, 222);
     }
 
     Border(223);
 
     cout<<endl;
-    AlineCenter("Press any key to exit...");
+    AlignCenter("Press any key to exit...");
     getch();
 
     if(categoryFile.is_open())
@@ -289,37 +540,66 @@ void LetterByLetter(const string text, int time) {
     return;
 }
 
-void AlineCenter (string text, int characterBorder1, int characterBorder2, int time, int character) {
+void AlignCenter (string text, int characterBorder1, int characterBorder2, int time, int character) {
     int length = text.length();
     char st[3];
     st[0] = character;
     st[1] = characterBorder1;
     st[2] = characterBorder2;
 
-    cout<<st[1];
+    cout << " " <<st[1];
 
     for(int i = 0; i < (68 - length)/2; i++) {
-        cout<< st[0];
+        cout << st[0];
     }
     LetterByLetter(text, time);
 
     for(int i = 0; i < (69 - length)/2; i++) {
-        cout<< st[0];
+        cout << st[0];
     }
 
-    cout<<st[2];
+    cout <<st[2] << endl;
+    return;
+}
+void AlignLeft (string text, int characterBorder1, int characterBorder2, int time, int character) {
+    int length = text.length();
+    char st[3];
+    st[0] = character;
+    st[1] = characterBorder1;
+    st[2] = characterBorder2;
 
-    cout<<endl;
+    cout << " " << st[1] << " ";
+
+    LetterByLetter(text, time);
+
+    for(int i = length; i < (67 - length)/2; i++) {
+        cout << st[0];
+    }
+
+    cout << st[2];
     return;
 }
 
-void Border(int characterBorder) {
+void Border(int characterBorder, int length) {
     char st[1];
     st[0] = characterBorder;
-    for(int i = 0; i < 70; i++) {
+    cout << " ";
+    for(int i = 0; i < length; i++) {
         cout<< st[0];
     }
     cout<<endl;
+    return;
+}
+void BorderC(int characterBorder, int characterBorderB, int characterBorderE) {
+    char st[3];
+    st[0] = characterBorder;
+    st[1] = characterBorderB;
+    st[2] = characterBorderE;
+    cout << " " << st[1];
+    for(int i = 0; i < 68; i++) {
+        cout<< st[0];
+    }
+    cout<< st[2] << endl;
     return;
 }
 
@@ -360,12 +640,27 @@ int DifrentDifficulties (ifstream& category, int currentHardnesL) {
 }
 
 string getAnswers (string line, int& i) {
-    string sentance = ")";
+    string sentance;
     while(line[i] != '/') {
         sentance = sentance + line[i];
         i++;
     }
     return sentance;
+}
+
+void CollectQuestion(int i, string line, Question &q) {
+    string sentance;
+    while(line[i] != '?') {
+        sentance = sentance + line[i];
+        i++;
+    }
+    q.question = sentance + "?";
+
+    q.trueAns = getAnswers(line, ++i);
+    q.ans1 = getAnswers(line, ++i);
+    q.ans2 = getAnswers(line, ++i);
+    q.ans3 = getAnswers(line, ++i);
+    return;
 }
 
 void ShowAnswer (string ans1, string ans2, int characterBorder1, int characterBorder2, int choice1, int choice2) {
@@ -374,11 +669,14 @@ void ShowAnswer (string ans1, string ans2, int characterBorder1, int characterBo
     st[1] = characterBorder1;
     st[2] = characterBorder2;
 
-    cout << st[1] << st[0] << choice1 << ans1;
+    if(ans1 == " ") cout << st[1] << st[0] << " " << ans1;
+    else cout << st[1] << st[0] << choice1<< ")" << ans1;
+
     for(int i = ans1.length() + 3; i < 34; i++) {
         cout<<st[0];
     }
-    cout << choice2 << ans2;
+    if(ans2 == " ") cout << " " << ans2;
+    else cout << choice2 << ")" << ans2;
     for(int i = 35 + ans2.length(); i < 69; i++) {
         cout<<st[0];
     }
@@ -387,59 +685,52 @@ void ShowAnswer (string ans1, string ans2, int characterBorder1, int characterBo
     return ;
 }
 
-void ShowQuestion (int& i, string line, int& trueAnswer, Question &q) {
-    Border(220);
+void ShowQuestion (int& trueAnswer, Question &q) {
+    BorderC(254, 219, 219);
 
-    string sentance;
-    while(line[i] != '?') {
-        sentance = sentance + line[i];
-        i++;
-    }
-    q.question = sentance + "?";
-    AlineCenter(q.question, 221, 222, 50000);
+    AlignCenter(" ", 221, 222);
+    AlignCenter(q.question, 221, 222, 50000);
+    AlignCenter(" ", 221, 222);
 
-    Border(223);
-
-    q.trueAns = getAnswers(line, ++i);
-    q.ans1 = getAnswers(line, ++i);
-    q.ans2 = getAnswers(line, ++i);
-    q.ans3 = getAnswers(line, ++i);
+    BorderC(223, 223, 223);
+    Border();
 
     trueAnswer = rand() % 4 + 1;
 
     switch (trueAnswer) {
         case 1:
-            ShowAnswer(q.trueAns, q.ans1, 221, 222);
-            ShowAnswer(q.ans2, q.ans3, 221, 222, 3, 4);
+            ShowAnswer(q.trueAns, q.ans1);
+            ShowAnswer(q.ans2, q.ans3, 32, 32, 3, 4);
             break;
         case 2:
-            ShowAnswer(q.ans1, q.trueAns, 221, 222);
-            ShowAnswer(q.ans2, q.ans3, 221, 222, 3, 4);
+            ShowAnswer(q.ans1, q.trueAns);
+            ShowAnswer(q.ans2, q.ans3, 32, 32, 3, 4);
             break;                                                       //Random right answer place
         case 3:
-            ShowAnswer(q.ans2, q.ans1, 221, 222);
-            ShowAnswer(q.trueAns, q.ans3, 221, 222, 3, 4);
+            ShowAnswer(q.ans2, q.ans1);
+            ShowAnswer(q.trueAns, q.ans3, 32, 32, 3, 4);
             break;
         case 4:
-            ShowAnswer(q.ans3, q.ans1, 221, 222);
-            ShowAnswer(q.ans2, q.trueAns, 221, 222, 3, 4);
+            ShowAnswer(q.ans3, q.ans1);
+            ShowAnswer(q.ans2, q.trueAns, 32, 32, 3, 4);
             break;
     }
-
-    Border(220);
+    Border();
+    Border(31);
+    Border();
+    return;
 }
 
 void UserInput (int& userAnswer, int minValue, int maxValue, int center) {
     string invalid;
     invalid = "Enter only numbers between " + to_string(minValue) + " and " + to_string(maxValue) + "!";
     while(true) {
-        //cout << endl;
         for(int i = 0; i < center; i++) cout<< " ";
         cin>>userAnswer;
 
         if(userAnswer >= minValue && userAnswer <= maxValue) break;
 
-        AlineCenter(invalid);
+        AlignCenter(invalid);
         cin.clear();
         cin.ignore();
     }
@@ -505,6 +796,14 @@ void Win (int& reward, int question) {
     }
 
     reward = reward + 100;
+    return;
+}
+
+void ShowReward(int reward) {
+    Border(220);
+    AlignCenter(" ", 221, 222);
+    AlignCenter("Reward for the round: " + to_string(reward), 221, 222);
+    AlignCenter(" ", 221, 222);
     return;
 }
 

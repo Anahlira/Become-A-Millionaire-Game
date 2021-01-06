@@ -39,9 +39,9 @@ int GuessTheAnsewer(int difficulty);
 void ActivateLifeline(int userAnswer, int difficulty, Question &q);
 bool ChooseLifeline (bool lifelines[], int& userAnswer);
 
-string WriteAnswer (string text = "Enter true answer: ", string errorText = "You didn't write the answer within the limitation!\n");
+string WriteAnswer (string text = "Enter true answer: ", string errorText = "You didn't write the answer within the limitation!\n",int limitation = 38);
 void NewQuestion (Question &q);
-void ChangeQuestion();
+void ChangeQuestion(Question &q);
 
 
 
@@ -62,18 +62,14 @@ int main() {
         BorderC(32, leftBorder, rightBorder);
 
         BorderC(32, leftBorder, rightBorder);
-        AlignCenter("GET SOME MONEY", leftBorder, rightBorder);//, 90000);
+        AlignCenter("GET SOME MONEY", leftBorder, rightBorder, 90000);
         BorderC(32, leftBorder, rightBorder);
         BorderC(32, leftBorder, rightBorder);
 
         AlignCenter("New game", leftBorder, rightBorder);
-        //sleep(1);
         AlignCenter("New question", leftBorder, rightBorder);
-        //sleep(1);
         AlignCenter("Change question", leftBorder, rightBorder);
-        //sleep(1);
         AlignCenter("Exit", leftBorder, rightBorder);
-        //sleep(1);
 
         BorderC(32, leftBorder, rightBorder);
         BorderC(32, leftBorder, rightBorder);
@@ -89,7 +85,7 @@ int main() {
                 NewQuestion(q);
                 break;
             case 3:
-                ChangeQuestion();
+                ChangeQuestion(q);
                 break;
             case 4:
                 return 0;
@@ -110,9 +106,11 @@ int main() {
     categoryAll.open("AllCategories.txt", ios::in);
 
     int row = 1;
+    int delimiterPos;
     string rowLine;
     while (getline(categoryAll, line)) {
-        rowLine = to_string(row) + "." + line;
+        delimiterPos = line.find("/");
+        rowLine = to_string(row) + "." + line.substr(delimiterPos + 1);
         AlignCenter(rowLine, 221, 222);
         row++;
     }
@@ -135,7 +133,7 @@ int main() {
     if(chosedCateggoryN != row) {
         while (getline(categoryAll, line)) {
             if(currentRow == chosedCateggoryN) {
-                chosedCategory = line + ".txt";
+                chosedCategory = line.substr(delimiterPos + 1) + ".txt";
                 break;
             }
             currentRow++;
@@ -325,17 +323,48 @@ void AlignCenter (string text, int characterBorder1, int characterBorder2, int t
     st[1] = characterBorder1;
     st[2] = characterBorder2;
 
-    cout << " " <<st[1];
+    //int spaceCounter = 0;
+    int lastSpace = 0;
+    int startPos = 0;
+    int rotations = 1;
+    bool stop = false;
 
-    for(int i = 0; i < (68 - length)/2; i++) {
-        cout << st[0];
-    }
-    LetterByLetter(text2, time);
-    for(int i = 0; i < (69 - length)/2; i++) {
-        cout << st[0];
-    }
+    text2.clear();
+    do {
+        if(text.length() / rotations > 66) {
+            for (int i = 0; i < 67; i++) {
+                if(text[startPos + i] == 32) {
+                    lastSpace = i + startPos;
+                    //spaceCounter++;
+                }
+            }
+            text2 = text.substr (startPos, lastSpace - startPos);
+        }
+        else {
+            text2 = text.substr (lastSpace);
+            stop = true;
+        }
+        length = text2.length();
 
-    cout <<st[2] << endl;
+        //.....display line.....//
+        cout << " " <<st[1];
+
+        for(int i = 0; i < (68 - length)/2; i++) {
+            cout << st[0];
+        }
+        LetterByLetter(text2, time);
+        for(int i = 0; i < (69 - length)/2; i++) {
+            cout << st[0];
+        }
+
+        cout << st[2] << endl;
+        //......................//
+
+        startPos = lastSpace + 1;
+        text2 = text;
+        rotations++;
+
+    } while (!stop);
     return;
 }
 void AlignLeft (string text, int characterBorder1, int characterBorder2, int time, int character) {
@@ -541,9 +570,11 @@ void NextQuestion (ifstream& categoryFile, int chosedCategoryN, string& chosedCa
         int currentRow = 1;
 
         string line;
+        int demitterPos = 0;
         while (getline(categoryAll, line)) {
             if(currentRow == chosedCateggoryN) {
-                chosedCategory = line + ".txt";
+                demitterPos = line.find("/");
+                chosedCategory = line.substr(demitterPos + 1) + ".txt";
                 break;
             }
             currentRow++;
@@ -815,13 +846,13 @@ void ActivateLifeline(int userAnswer, int difficulty, Question &q){
     return;
 }
 
-string WriteAnswer (string text, string textError) {
+string WriteAnswer (string text, string textError, int limitation) {
     string answer;
     while(true) {
         AlignLeft (text);
         getline(cin, answer);
 
-        if (answer.length() < 38 && answer.length() > 2)
+        if (answer.length() < limitation && answer.length() > 2)
             break;
 
         AlignLeft (textError);
@@ -849,7 +880,9 @@ void NewQuestion (Question &q) {
         cin >> category;
 
         while(getline(allCategories, line)) {
-            if(line == category) {
+            int delimiterPos = line.find("/");
+            if(line.substr(delimiterPos + 1) == category || line.substr(0, delimiterPos) == category) {
+                category = line.substr(delimiterPos + 1);
                 foundCategory = true;
                 break;
             }
@@ -908,21 +941,20 @@ void NewQuestion (Question &q) {
         return;
 
     while(getline(categoryFile, line)){
-        categoryID = line.substr (2,2);
-    cout << categoryID<<endl;
-        IDNumber = int(line[4]) - 48;
-        i = 5;
+        if(line[4] != 42 && line[4] != 32) { //Skips lines with "*" or space
+            categoryID = line.substr (2,2);
+            IDNumber = int(line[4]) - 48;
+            i = 5;
 
-        while(line[i] != '/') {
-            IDNumber = IDNumber*10 + int(line[i]) - 48;
-            i++;
-        }
-        if (newID < IDNumber) {
-                newID = IDNumber;
+            while(line[i] != '/') {
+                IDNumber = IDNumber*10 + int(line[i]) - 48;
+                i++;
+            }
+            if (newID < IDNumber) {
+                    newID = IDNumber;
+            }
         }
     }
-    getch();
-
 
     newID++;
     categoryFile.close();
@@ -937,8 +969,141 @@ void NewQuestion (Question &q) {
     return;
 }
 
-void ChangeQuestion() {
-    cout << "one day you will have the chance...";
+void ChangeQuestion(Question &q) {
+    string changeID;
+    string line;
+    string textCategory;
+    string question;
+    char symbol[1];
+    symbol[0] = 42;
+    int delimiterPos = 0;
+    int row = 0;
+    bool findCategory = false;
+    ifstream allCategories;
+
+    allCategories.open("AllCategories.txt");
+    if(!allCategories.is_open()) {
+        AlignCenter("Error with the opening of the file...");
+        AlignCenter("Press any key to return to the main menu");
+        getch();
+        return;
+    }
+
+    cin.clear();
+    cin.ignore();
+    NewScreen();
+    while(!findCategory){
+        AlignLeft("Enter ID:");
+        getline(cin, changeID);
+
+        while(getline(allCategories, line)) {
+            delimiterPos = line.find("/");
+            if (changeID[0] == line[0] && changeID[1] == line[1]) {
+                textCategory = line.substr(delimiterPos + 1);
+                findCategory = true;
+                break;
+            }
+        }
+        if(findCategory) break;
+
+        allCategories.clear();
+        allCategories.seekg(0);
+        AlignLeft("Enter valid ID.\n");
+    }
+    allCategories.close();
+
+    fstream changeCategory;
+    changeCategory.open(textCategory + ".txt");
+    if(!changeCategory.is_open()) {
+        AlignCenter("Error with the opening of the category...");
+        AlignCenter("Press any key to return to the main menu");
+        getch();
+        return;
+    }
+
+    int gotoS = 0;
+    while(getline(changeCategory, line)){
+        delimiterPos = line.find("/");
+        //cout<<line<<endl;
+        if(line.substr(4, delimiterPos - 4) == changeID.substr(2)) {
+            question = line;
+            break;
+        }
+        gotoS = gotoS + line.length() + 2;
+    }
+
+    changeCategory.clear();
+    changeCategory.seekp(gotoS);
+
+    for(int i = 0; i < question.length(); i++)
+                changeCategory << "*";
+    changeCategory <<endl;
+
+    changeCategory.close();
+
+    string text;
+    int chose = 0;
+    int i = 2;
+    while(line[i] != '/') i++;
+    i++;
+
+    CollectQuestion(i, question, q);
+
+    AlignLeft("What do you want to change?\n");
+    AlignLeft("[1]Question\n");
+    AlignLeft("[2]True answer\n");
+    AlignLeft("[3]Wrong answers\n");
+    Border();
+    Border(223);
+
+    UserInput(chose, 1, 3, 0);
+    cin.clear();
+    cin.ignore();
+
+    NewScreen(220);
+    switch (chose) {
+        case 1:
+            AlignLeft ("Please finish your question with -> ?\n");
+            while(true) {
+                AlignLeft ("Enter your new question: ");
+                getline(cin, text);
+
+                int i = text.length();
+                if(text[i-1] == '?')
+                    break;
+
+                AlignLeft ("Why you did'n finish with -> ?\n");
+                cin.clear();
+            }
+            q.question = text;
+            break;
+        case 2:
+            AlignLeft("New true answer: ");
+            q.trueAns = WriteAnswer(text);
+            break;
+        case 3:
+            AlignLeft("New wrong answer: ");
+            q.ans1 = WriteAnswer(text);
+            AlignLeft("New wrong answer: ");
+            q.ans2 = WriteAnswer(text);
+            AlignLeft("New wrong answer: ");
+            q.ans3 = WriteAnswer(text);
+            break;
+    }
+
+    changeCategory.open(textCategory + ".txt", ios::app);
+    if(!changeCategory.is_open()) {
+        AlignCenter("Error with the opening of the category...");
+        AlignCenter("Press any key to return to the main menu");
+        getch();
+        return;
+    }
+
+    changeCategory << question.substr(0, delimiterPos + 1) << q.question << q.trueAns << "/"
+                 << q.ans1 << "/" << q.ans2 << "/" << q.ans3 << "/" <<"\n";
+
+    changeCategory.close();
+
     system("pause");
     return ;
 }

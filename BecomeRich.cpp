@@ -22,21 +22,7 @@ void BorderC(int characterBorder = 32, int characterBorderB = 32, int characterB
 void NewScreen(int border = 220);
 void AlignCenter (string text, int characterBorder1 = 32, int characterBorder2 = 32,int time = 0, int character = 32);
 void AlignLeft (string text, int characterBorder1 = 32, int characterBorder2 = 32,int time = 0, int character = 32);
-void WaitUser (string text, bool center = 1, int border = 32) {
-    if(center) {
-        AlignCenter(text, border, border);
-        Border(border);
-    }
-    else {
-        Border(border);
-        AlignLeft(text, border, border);
-        Border(border);
-        //system("pause");
-        //return;
-    }
-    getch();
-    return;
-}
+void WaitUser (string text, bool center = 1, int border = 32);
 
 int DifrentDifficulties (ifstream& category, int currentHardnesL);
 string getAnswers (string line, int& i);
@@ -47,228 +33,13 @@ void UserInput (int& userAnswer, int minValue = 1, int maxValue = 4, int center 
 void NextQuestion (ifstream& categoryFile, int chosedCategoryN, string& chosedCategory, int row);
 void NextDifficulty (int question, int& difficulty);
 void Win (int& reward, int question);
-
 void ShowReward(int reward);
-void ShowLifelines (bool lifelines[]){
-    AlignLeft ("Available lifeline: ");
-    Border();
-    if(lifelines[0]) {
-        AlignLeft ("[1] 50/50");
-        cout << endl;
-    }
-    if(lifelines[1]) {
-        AlignLeft ("[2] Call your friend");
-        cout << endl;
-    }
-    if(lifelines[2]) {
-        AlignLeft ("[3] Help from the audience");
-        cout << endl;
-    }
-    Border();
-    return;
-}
+void ShowLifelines (bool lifelines[]);
+int GuessTheAnsewer(int difficulty);
+void ActivateLifeline(int userAnswer, int difficulty, Question &q);
+bool ChooseLifeline (bool lifelines[], int& userAnswer);
 
-int GuessTheAnsewer(int difficulty) {
-    int random = rand() % 100 + 1;
-    difficulty = difficulty - 47;
-    if (difficulty >=0 && difficulty < 3) {
-        if(random > 0 && random < 81)
-            return 4;
-        else return rand() % 3 + 1;
-    }
-    else  if (difficulty >=4 && difficulty < 6) {
-        if(random > 0 && random < 61)
-            return 4;
-        else return rand() % 3 + 1;
-    }
-    else {
-        if(random > 0 && random < 31)
-            return 4;
-        else return rand() % 3 + 1;
-    }
-}
-
-void ActivateLifeline(int userAnswer, int difficulty, Question &q){
-
-    string friendName = "My friend";
-    int random = rand() % 3 + 1;
-    int randomP = 0; //to save the first eliminated answer
-
-    int helpAnswer = GuessTheAnsewer(difficulty);
-    string answer;
-    if(helpAnswer == 1) answer = q.ans1;
-    else if(helpAnswer == 2) answer = q.ans2;
-    else if(helpAnswer == 3) answer = q.ans3;
-    else answer = q.trueAns;
-
-    switch(userAnswer) {
-        case 1:
-            for(int i = 0; i < 2; i++) {
-                if (random == 1)
-                    q.ans1 = " ";
-                if (random == 2)
-                    q.ans2 = " ";
-                if (random == 3)
-                    q.ans3 = " ";
-                randomP = random;
-                random = rand() % 3 + 1;
-                while(random == randomP) {
-                    random = rand() % 3 + 1;
-                }
-            }
-            system("CLS");
-            break;
-
-        case 2:
-            NewScreen(220);
-            AlignLeft("Who do you wanna call: ", 32);
-            cin.ignore();
-            getline(cin, friendName);
-            NewScreen();
-            AlignCenter("Calling " + friendName);
-            AlignCenter(". . . . .", 32, 32, 300000);
-
-            NewScreen(220);
-            BorderC(32, 221, 222);
-            AlignCenter("Pres any key to continue the conversation.", 221, 222);
-            BorderC(32, 221, 222);
-            Border(223);
-
-            WaitUser(friendName + ": Hello? What's up? Need help?", 0);
-            WaitUser("Yes. " + q.question, 0);
-            WaitUser(friendName + ": Just... Let me think for a second.", 0);
-            Border();
-            AlignLeft("Waiting...", 32, 32, 80000);
-            Border();
-            WaitUser(friendName + ": Ok, I think it is " + answer, 0);
-            system("CLS");
-            Border();
-            AlignCenter(friendName + " thinks the true answer is " + answer);
-            break;
-
-        case 3:
-            char st[1];
-            st[0] = 220;
-
-            //....percentage of the vote....//
-            string a,b,c,d;
-            a = q.trueAns;
-            b = q.ans1;
-            c = q.ans2;
-            d = q.ans3;
-            switch (rand() % 4 + 1) {
-            case 1:
-                a = q.ans1;
-                b = q.trueAns;
-                break;
-            case 2:
-                a = q.ans2;
-                c = q.trueAns;
-                break;
-            case 3:
-                a = q.ans3;
-                d = q.trueAns;
-                break;
-            case 4://to keep the first values
-                break;
-            }
-            string answerS[4] = {a, b, c, d};
-
-            int percentage = 0;
-            int usePr[3];
-            int longestAns = 0;
-            int randMax = 0;
-
-            for (int j = 0; j < 4; j++) {
-                if(answerS[j].length() > longestAns)
-                    longestAns = answerS[j].length();
-            }
-
-            //....percentage of the vote....//
-            if(difficulty < 4) {
-                percentage = rand() % 12 + 15;
-            }
-            else percentage = rand() % 3 + 15;
-            randMax = 31 - percentage;
-
-            usePr[0] = rand() % randMax/2 + 1;
-            randMax = randMax - usePr[0];
-
-            if(randMax > 0) {
-                usePr[1] = rand() % randMax + 1;
-                randMax = randMax - usePr[1];
-                if (randMax > 0) {
-                    usePr[2] = rand() % randMax + 1;
-                }
-                else usePr[2] = 0;
-            }
-            else  usePr[1] = 0;
-
-            //-------- show pow lines----------//
-            system("CLS");
-            AlignLeft("         Audience poll"); //spaces are for visuals
-            Border();
-            Border();
-            int z = 0;
-
-            for(int j = 0; j < 4; j++) {
-                if(answerS[j] == answer) {
-                    cout << answer << ": ";
-                    for(int i = answer.length(); i < longestAns; i++)
-                        cout << " ";
-
-                    Border(220, percentage);
-                }
-                else {
-                    cout << answerS[j] << ": ";
-                    for(int i = answerS[j].length(); i < longestAns; i++)
-                        cout << " ";
-
-                    Border(220, usePr[z]);
-                    z++;
-                }
-            }
-            //----------------------------------//
-            Border();
-            break;
-        }
-
-    return;
-}
-bool ChooseLifeline (bool lifelines[], int& userAnswer) {
-    string llInput;
-    while(true) {
-        cin >> llInput;
-        if(llInput == "y" || llInput == "Y") {
-            NewScreen(31);
-
-            ShowLifelines(lifelines);
-            while(true) {
-                AlignLeft("What would you like to use:");
-                cin >> userAnswer;
-                if(userAnswer == 1 && lifelines[0] == 1) {
-                    lifelines[0] = 0;
-                    break;
-                }
-                else if(userAnswer == 2 && lifelines[1] == 1) {
-                    lifelines[1] = 0;
-                    break;
-                }
-                else if(userAnswer == 3 && lifelines[2] == 1) {
-                    lifelines[2] = 0;
-                    break;
-                }
-                cin.clear();
-                cin.ignore();
-            }
-            break;
-        }
-        if(llInput == "n" || llInput == "N")
-            return 0;
-    }
-    return 1;
-}
-
+string WriteAnswer (string text = "Enter true answer: ", string errorText = "You didn't write the answer within the limitation!\n");
 void NewQuestion (Question &q);
 void ChangeQuestion();
 
@@ -276,31 +47,37 @@ void ChangeQuestion();
 
 int main() {
     Question q;
+    int topBorder = 220;
+    int bottomBorder = 223;
+    int leftBorder = 221;
+    int rightBorder = 222;
+    int middleBorder = 219;
 
     //...................................Main menu........................................//
     int choice = 0;
     bool newGame = false;
 
     while (!newGame) {
-        NewScreen(220);
-        Border(220);
+        NewScreen(topBorder);
+        BorderC(32, leftBorder, rightBorder);
 
-        Border();
-        AlignCenter("GET SOME MONEY", 32, 32);//, 90000);
-        cout << endl << endl;
+        BorderC(32, leftBorder, rightBorder);
+        AlignCenter("GET SOME MONEY", leftBorder, rightBorder);//, 90000);
+        BorderC(32, leftBorder, rightBorder);
+        BorderC(32, leftBorder, rightBorder);
 
-        AlignCenter("New game");
+        AlignCenter("New game", leftBorder, rightBorder);
         //sleep(1);
-        AlignCenter("New question");
+        AlignCenter("New question", leftBorder, rightBorder);
         //sleep(1);
-        AlignCenter("Change question");
+        AlignCenter("Change question", leftBorder, rightBorder);
         //sleep(1);
-        AlignCenter("Exit");
+        AlignCenter("Exit", leftBorder, rightBorder);
         //sleep(1);
 
-        cout<<endl<<endl;
-        Border(223);
-        Border(223);
+        BorderC(32, leftBorder, rightBorder);
+        BorderC(32, leftBorder, rightBorder);
+        Border(bottomBorder);
 
         UserInput(choice);
 
@@ -541,6 +318,7 @@ void LetterByLetter(const string text, int time) {
 }
 
 void AlignCenter (string text, int characterBorder1, int characterBorder2, int time, int character) {
+    string text2 = text;
     int length = text.length();
     char st[3];
     st[0] = character;
@@ -552,8 +330,7 @@ void AlignCenter (string text, int characterBorder1, int characterBorder2, int t
     for(int i = 0; i < (68 - length)/2; i++) {
         cout << st[0];
     }
-    LetterByLetter(text, time);
-
+    LetterByLetter(text2, time);
     for(int i = 0; i < (69 - length)/2; i++) {
         cout << st[0];
     }
@@ -571,12 +348,6 @@ void AlignLeft (string text, int characterBorder1, int characterBorder2, int tim
     cout << " " << st[1] << " ";
 
     LetterByLetter(text, time);
-
-    for(int i = length; i < (67 - length)/2; i++) {
-        cout << st[0];
-    }
-
-    cout << st[2];
     return;
 }
 
@@ -606,6 +377,20 @@ void BorderC(int characterBorder, int characterBorderB, int characterBorderE) {
 void NewScreen(int border) {
     system("CLS");
     Border(220);
+    return;
+}
+
+void WaitUser (string text, bool center, int border) {
+    if(center) {
+        AlignCenter(text, border, border);
+        Border(border);
+    }
+    else {
+        Border(border);
+        AlignLeft(text, border, border);
+        Border(border);
+    }
+    getch();
     return;
 }
 
@@ -730,7 +515,9 @@ void UserInput (int& userAnswer, int minValue, int maxValue, int center) {
 
         if(userAnswer >= minValue && userAnswer <= maxValue) break;
 
-        AlignCenter(invalid);
+        if(center != 0)
+            AlignCenter (invalid);
+        else AlignLeft (invalid);
         cin.clear();
         cin.ignore();
     }
@@ -807,8 +594,346 @@ void ShowReward(int reward) {
     return;
 }
 
-void NewQuestion (Question &q) {
+void ShowLifelines (bool lifelines[]){
+    AlignLeft ("Available lifeline: ");
+    Border();
+    if(lifelines[0]) {
+        AlignLeft ("[1] 50/50");
+        cout << endl;
+    }
+    if(lifelines[1]) {
+        AlignLeft ("[2] Call your friend");
+        cout << endl;
+    }
+    if(lifelines[2]) {
+        AlignLeft ("[3] Help from the audience");
+        cout << endl;
+    }
+    Border();
+    return;
+}
 
+bool ChooseLifeline (bool lifelines[], int& userAnswer) {
+    string llInput;
+    while(true) {
+        cin >> llInput;
+        if(llInput == "y" || llInput == "Y") {
+            NewScreen(31);
+
+            ShowLifelines(lifelines);
+            while(true) {
+                AlignLeft("What would you like to use:");
+                cin >> userAnswer;
+                if(userAnswer == 1 && lifelines[0] == 1) {
+                    lifelines[0] = 0;
+                    break;
+                }
+                else if(userAnswer == 2 && lifelines[1] == 1) {
+                    lifelines[1] = 0;
+                    break;
+                }
+                else if(userAnswer == 3 && lifelines[2] == 1) {
+                    lifelines[2] = 0;
+                    break;
+                }
+                cin.clear();
+                cin.ignore();
+            }
+            break;
+        }
+        if(llInput == "n" || llInput == "N")
+            return 0;
+    }
+    return 1;
+}
+
+int GuessTheAnsewer(int difficulty) {
+    int random = rand() % 100 + 1;
+    difficulty = difficulty - 47;
+    if (difficulty >=0 && difficulty < 3) {
+        if(random > 0 && random < 81)
+            return 4;
+        else return rand() % 3 + 1;
+    }
+    else  if (difficulty >=4 && difficulty < 6) {
+        if(random > 0 && random < 61)
+            return 4;
+        else return rand() % 3 + 1;
+    }
+    else {
+        if(random > 0 && random < 31)
+            return 4;
+        else return rand() % 3 + 1;
+    }
+}
+
+void ActivateLifeline(int userAnswer, int difficulty, Question &q){
+
+    string friendName = "My friend";
+    int random = rand() % 3 + 1;
+    int randomP = 0; //to save the first eliminated answer
+
+    int helpAnswer = GuessTheAnsewer(difficulty);
+    string answer;
+    if(helpAnswer == 1) answer = q.ans1;
+    else if(helpAnswer == 2) answer = q.ans2;
+    else if(helpAnswer == 3) answer = q.ans3;
+    else answer = q.trueAns;
+
+    switch(userAnswer) {
+        case 1:
+            for(int i = 0; i < 2; i++) {
+                if (random == 1)
+                    q.ans1 = " ";
+                if (random == 2)
+                    q.ans2 = " ";
+                if (random == 3)
+                    q.ans3 = " ";
+                randomP = random;
+                random = rand() % 3 + 1;
+                while(random == randomP) {
+                    random = rand() % 3 + 1;
+                }
+            }
+            system("CLS");
+            break;
+
+        case 2:
+            NewScreen(220);
+            AlignLeft("Who do you wanna call: ", 32);
+            cin.ignore();
+            getline(cin, friendName);
+            NewScreen();
+            AlignCenter("Calling " + friendName);
+            AlignCenter(". . . . .", 32, 32, 300000);
+
+            NewScreen(220);
+            BorderC(32, 221, 222);
+            AlignCenter("Pres any key to continue the conversation.", 221, 222);
+            BorderC(32, 221, 222);
+            Border(223);
+
+            WaitUser(friendName + ": Hello? What's up? Need help?", 0);
+            WaitUser("Yes. " + q.question, 0);
+            WaitUser(friendName + ": Just... Let me think for a second.", 0);
+            Border();
+            AlignLeft("Waiting...", 32, 32, 80000);
+            Border();
+            WaitUser(friendName + ": Ok, I think it is " + answer, 0);
+            system("CLS");
+            Border();
+            AlignCenter(friendName + " thinks the true answer is " + answer);
+            break;
+
+        case 3:
+            char st[1];
+            st[0] = 220;
+
+            //....percentage of the vote....//
+            string a,b,c,d;
+            a = q.trueAns;
+            b = q.ans1;
+            c = q.ans2;
+            d = q.ans3;
+            switch (rand() % 4 + 1) {
+            case 1:
+                a = q.ans1;
+                b = q.trueAns;
+                break;
+            case 2:
+                a = q.ans2;
+                c = q.trueAns;
+                break;
+            case 3:
+                a = q.ans3;
+                d = q.trueAns;
+                break;
+            case 4://to keep the first values
+                break;
+            }
+            string answerS[4] = {a, b, c, d};
+
+            int percentage = 0;
+            int usePr[3];
+            int longestAns = 0;
+            int randMax = 0;
+
+            for (int j = 0; j < 4; j++) {
+                if(answerS[j].length() > longestAns)
+                    longestAns = answerS[j].length();
+            }
+
+            //....percentage of the vote....//
+            if(difficulty < 4) {
+                percentage = rand() % 12 + 15;
+            }
+            else percentage = rand() % 3 + 15;
+            randMax = 31 - percentage;
+
+            usePr[0] = rand() % randMax/2 + 1;
+            randMax = randMax - usePr[0];
+
+            if(randMax > 0) {
+                usePr[1] = rand() % randMax + 1;
+                randMax = randMax - usePr[1];
+                if (randMax > 0) {
+                    usePr[2] = rand() % randMax + 1;
+                }
+                else usePr[2] = 0;
+            }
+            else  usePr[1] = 0;
+
+            //-------- show pow lines----------//
+            system("CLS");
+            AlignLeft("         Audience poll"); //spaces are for visuals
+            Border();
+            Border();
+            int z = 0;
+
+            for(int j = 0; j < 4; j++) {
+                if(answerS[j] == answer) {
+                    cout << answer << ": ";
+                    for(int i = answer.length(); i < longestAns; i++)
+                        cout << " ";
+
+                    Border(220, percentage);
+                }
+                else {
+                    cout << answerS[j] << ": ";
+                    for(int i = answerS[j].length(); i < longestAns; i++)
+                        cout << " ";
+
+                    Border(220, usePr[z]);
+                    z++;
+                }
+            }
+            //----------------------------------//
+            Border();
+            break;
+        }
+
+    return;
+}
+
+string WriteAnswer (string text, string textError) {
+    string answer;
+    while(true) {
+        AlignLeft (text);
+        getline(cin, answer);
+
+        if (answer.length() < 38 && answer.length() > 2)
+            break;
+
+        AlignLeft (textError);
+
+        cin.clear();
+    }
+    return answer;
+}
+
+void NewQuestion (Question &q) {
+    NewScreen();
+
+    fstream categoryFile;
+    string line;
+    string category;
+    bool foundCategory = false;
+
+    fstream allCategories;
+    allCategories.open ("AllCategories.txt");
+
+    //..............Choses the category...............//
+
+    AlignLeft("Please chose a category: ");
+    while(!foundCategory) {
+        cin >> category;
+
+        while(getline(allCategories, line)) {
+            if(line == category) {
+                foundCategory = true;
+                break;
+            }
+        }
+        allCategories.clear();
+        allCategories.seekg(0);
+        AlignLeft ("Please enter existing category: ");
+        cin.clear();
+        cin.ignore();
+    }
+    allCategories.close();
+
+    //.............Writing the new question...........//
+
+    string question;
+    int difficulty = 0;
+
+    NewScreen();
+    AlignLeft ("Please finish your question with -> ?");
+    Border();
+
+    while(true) {
+        AlignLeft ("Enter your question: ");
+        getline(cin, q.question);
+
+        int i = q.question.length();
+        if(q.question[i-1] == '?')
+            break;
+
+        AlignLeft ("Why you did'n finish with -> ?\n");
+        cin.clear();
+    }
+
+    AlignLeft ("Choose difficulty (1 to 10): ");
+    UserInput(difficulty, 1, 10, 0);
+    difficulty--;
+    cin.ignore();
+
+    NewScreen();
+    AlignLeft("Your answers should be no longer than 38 characters!\n");
+
+    q.trueAns = WriteAnswer();
+    q.ans1 = WriteAnswer("Enter wrong answer: ");
+    q.ans2 = WriteAnswer("Enter wrong answer: ");
+    q.ans3 = WriteAnswer("Enter wrong answer: ");
+
+    //..........Start writing.........//
+
+    int IDNumber = 0;
+    int newID = 0;
+    string categoryID;
+    int i = 0;
+
+    categoryFile.open (category + ".txt", ios::in);
+    if(!categoryFile.is_open())
+        return;
+
+    while(getline(categoryFile, line)){
+        categoryID = line.substr (2,2);
+    cout << categoryID<<endl;
+        IDNumber = int(line[4]) - 48;
+        i = 5;
+
+        while(line[i] != '/') {
+            IDNumber = IDNumber*10 + int(line[i]) - 48;
+            i++;
+        }
+        if (newID < IDNumber) {
+                newID = IDNumber;
+        }
+    }
+    getch();
+
+
+    newID++;
+    categoryFile.close();
+    categoryFile.open (category + ".txt", ios::out | ios::app);
+    if(!categoryFile.is_open())
+        return;
+
+    categoryFile << difficulty << "." << categoryID << newID << "/" << q.question << q.trueAns << "/"
+                 << q.ans1 << "/" << q.ans2 << "/" << q.ans3 << "/" <<"\n";
+
+    categoryFile.close();
     return;
 }
 

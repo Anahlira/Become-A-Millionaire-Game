@@ -4,7 +4,6 @@
 #include <stdlib.h> // rand
 #include <unistd.h> // sleep
 #include <ctime>    //srand
-#include <conio.h>
 #include <limits>   //numeric_limits<streamsize>::max()
 
 using namespace std;
@@ -28,6 +27,7 @@ void EmptyLines (int emptyLines = 1, int characterBorder = 32, int characterBord
 void NewScreen (int border = 220);
 void AlignCenter (string text, int characterBorder1 = 32, int characterBorder2 = 32,int time = 0, int character = 32);
 void AlignLeft (string text, int characterBorder1 = 32, int characterBorder2 = 32,int time = 0, int character = 32);
+void pause(bool center = true, string text = "Press any key to continue...");
 void WaitUser (string text, bool center = 1, int border = 32);
 
 //------FUNCTIONS------//
@@ -113,7 +113,7 @@ int main() {
 //.....................................Category...........................................//
 
     //....Show categories.....//
-    BorderC(32, 221, 222);
+    BorderC(32, leftBorder, rightBorder);
 
     fstream categoryAll;
     categoryAll.open("AllCategories.txt", ios::in);
@@ -252,7 +252,7 @@ int main() {
                             AlignCenter("Press any key to continue...");
 
                             Border(bottomBorder);
-                            getch();
+                            cin.get();
                             system("CLS");
 
                             break;
@@ -272,8 +272,7 @@ int main() {
                             Border(bottomBorder);
                             Border();
 
-                            AlignCenter ("Press any key to exit...");
-                            getch();
+                            pause(1, "Press any key to exit...");
 
                             if (categoryFile.is_open()) //close the file only if there is one open
                                 categoryFile.close();
@@ -303,9 +302,7 @@ int main() {
     Border(bottomBorder);
 
     BorderC(32, leftBorder, rightBorder);
-    AlignCenter("Press any key to exit...");
-    getch();
-
+    pause(1, "Press any key to exit...");
     if(categoryFile.is_open())
         categoryFile.close();
 
@@ -386,6 +383,14 @@ void AlignLeft (string text, int characterBorder1, int characterBorder2, int tim
     return;
 }
 
+void pause(bool center, string text) {
+    if(center)
+        AlignCenter(text);
+    else AlignLeft(text);
+    cin.get();
+    return;
+}
+
 void Border (int characterBorder, int length) {
     char st[1];
     st[0] = characterBorder;
@@ -433,7 +438,7 @@ void WaitUser (string text, bool center, int border) {
         AlignLeft(text, border, border);
         Border(border);
     }
-    getch();
+    cin.get();
     return;
 }
 
@@ -1001,8 +1006,7 @@ void ChangeQuestion(Question &q) {
     allCategories.open("AllCategories.txt");
     if(!allCategories.is_open()) {
         AlignCenter("Error with the opening of the file...");
-        AlignCenter("Press any key to return to the main menu");
-        getch();
+        pause(1, "Press any key to return to the main menu");
         return;
     }
 
@@ -1033,8 +1037,7 @@ void ChangeQuestion(Question &q) {
     changeCategory.open(textCategory + ".txt");
     if (!changeCategory.is_open()) {
         AlignCenter("Error with the opening of the category...");
-        AlignCenter("Press any key to return to the main menu");
-        getch();
+        pause(1, "Press any key to return to the main menu");
         return;
     }
 
@@ -1111,8 +1114,7 @@ void ChangeQuestion(Question &q) {
     changeCategory.open(textCategory + ".txt", ios::app);
     if(!changeCategory.is_open()) {
         AlignCenter("Error with the opening of the category...");
-        AlignCenter("Press any key to return to the main menu");
-        getch();
+        pause(1, "Press any key to return to the main menu");
         return;
     }
 
@@ -1121,6 +1123,5 @@ void ChangeQuestion(Question &q) {
 
     changeCategory.close();
 
-    system("pause");
     return ;
 }

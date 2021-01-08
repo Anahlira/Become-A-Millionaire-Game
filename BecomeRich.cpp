@@ -48,6 +48,29 @@ void ActivateLifeline (int userAnswer, int difficulty, Question &q);
 bool ChooseLifeline (bool lifelines[], int& userAnswer);
 string WriteAnswer (string text = "Enter true answer: ", string errorText = "You didn't write the answer within the limitation!\n",int limitation = 38);
 
+void ShowCategories(int& row, fstream& categoryAll, int& delimiterPos, const bool closeFile = true, int leftBorder = 221, int rightBorder = 222, const bool finalOption = false) {
+    categoryAll.open("AllCategories.txt", ios::in);
+
+    string rowLine;
+    string line;
+    while (getline(categoryAll, line)) {
+        delimiterPos = line.find("/");
+        rowLine = to_string(row) + "." + line.substr(delimiterPos + 1);
+        AlignCenter(rowLine, leftBorder, rightBorder);
+        row++;
+    }
+    if (finalOption) { // used only for main menu
+        rowLine = to_string(row) + ".All Categories";
+        AlignCenter(rowLine, leftBorder, rightBorder);
+    }
+
+    categoryAll.clear();
+    categoryAll.seekg(0);
+    if(closeFile)
+        categoryAll.close();
+    return;
+}
+
 //----MAIN FUNCTUINS----//
 
 void NewQuestion (Question &q);
@@ -115,23 +138,10 @@ int main() {
     //....Show categories.....//
     BorderC(32, leftBorder, rightBorder);
 
-    fstream categoryAll;
-    categoryAll.open("AllCategories.txt", ios::in);
-
+    int delimiterPos = 0;
     int row = 1;
-    int delimiterPos;
-    string rowLine;
-    while (getline(categoryAll, line)) {
-        delimiterPos = line.find("/");
-        rowLine = to_string(row) + "." + line.substr(delimiterPos + 1);
-        AlignCenter(rowLine, leftBorder, rightBorder);
-        row++;
-    }
-    rowLine = to_string(row) + ".All Categories";
-    AlignCenter(rowLine, leftBorder, rightBorder);
-
-    categoryAll.clear();
-    categoryAll.seekg(0);
+    fstream categoryAll;
+    ShowCategories (row, categoryAll, delimiterPos, false, leftBorder, rightBorder, true);
 
     BorderC(32, leftBorder, rightBorder);
     Border(bottomBorder);
@@ -152,8 +162,8 @@ int main() {
             currentRow++;
         }
     }
-
-    categoryAll.close();
+    if(categoryAll.is_open())
+        categoryAll.close();
     //.....................................................................................//
 
     system("CLS");
@@ -252,7 +262,7 @@ int main() {
                             AlignCenter("Press any key to continue...");
 
                             Border(bottomBorder);
-                            cin.get();
+                            pause(1, " ");
                             system("CLS");
 
                             break;
@@ -352,11 +362,11 @@ void AlignCenter (string text, int characterBorder1, int characterBorder2, int t
         //.....display line.....//
         cout << " " <<st[1];
 
-        for(int i = 0; i < (68 - length)/2; i++) {
+        for (int i = 0; i < (68 - length)/2; i++) {
             cout << st[0];
         }
         LetterByLetter(text2, time);
-        for(int i = 0; i < (69 - length)/2; i++) {
+        for (int i = 0; i < (69 - length)/2; i++) {
             cout << st[0];
         }
 
@@ -387,6 +397,7 @@ void pause(bool center, string text) {
     if(center)
         AlignCenter(text);
     else AlignLeft(text);
+    cin.ignore();
     cin.get();
     return;
 }
@@ -396,9 +407,9 @@ void Border (int characterBorder, int length) {
     st[0] = characterBorder;
     cout << " ";
     for(int i = 0; i < length; i++) {
-        cout<< st[0];
+        cout << st[0];
     }
-    cout<<endl;
+    cout << endl;
     return;
 }
 
@@ -889,33 +900,42 @@ void NewQuestion (Question &q) {
 
     fstream categoryFile;
     string line;
+
     string category;
     bool foundCategory = false;
 
-    fstream allCategories;
-    allCategories.open ("AllCategories.txt");
 
     //..............Choses the category...............//
 
-    AlignLeft("Please chose a category: ");
-    while(!foundCategory) {
-        cin >> category;
+    int delimiterPos = 0;
+    int row = 1;
+    int chosedCateggoryN = 0;
+    //Border(220);
 
-        while(getline(allCategories, line)) {
-            int delimiterPos = line.find("/");
-            if(line.substr(delimiterPos + 1) == category || line.substr(0, delimiterPos) == category) {
-                category = line.substr(delimiterPos + 1);
-                foundCategory = true;
-                break;
-            }
+    fstream allCategories;
+    ShowCategories(row, allCategories, delimiterPos, false);
+
+    Border(223);
+    Border();
+    AlignCenter("Please chose a category: ");
+
+    UserInput(chosedCateggoryN, 1, row);
+
+    int currentRow = 1;
+
+    while (getline(allCategories, line)) {
+        if(currentRow == chosedCateggoryN) {
+            category = line.substr(delimiterPos + 1) + ".txt";
+            break;
         }
-        allCategories.clear();
-        allCategories.seekg(0);
-        AlignLeft ("Please enter existing category: ");
-        cin.clear();
-        cin.ignore();
+        currentRow++;
     }
-    allCategories.close();
+
+    if(allCategories.is_open())
+        allCategories.close();
+
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(),'\n');
 
     //.............Writing the new question...........//
 
@@ -928,10 +948,20 @@ void NewQuestion (Question &q) {
 
     while(true) {
         AlignLeft ("Enter your question: ");
-        getline(cin, q.question);
+        getline(cin, question);
 
-        int i = q.question.length();
-        if(q.question[i-1] == '?')
+        q.question = question;
+        for(int i = 0; i <= question.length(); i++){
+            if (question[i] != '?')
+                q.question[i] = question[i];
+            else {
+                q.question[i] = '?';
+                q.question = q.question.substr(0, i + 1);
+                break;
+            }
+        }
+        int len = q.question.length() - 1;
+        if(q.question[len] == '?')
             break;
 
         AlignLeft ("Why you did'n finish with -> ?\n");
@@ -941,7 +971,8 @@ void NewQuestion (Question &q) {
     AlignLeft ("Choose difficulty (1 to 10): ");
     UserInput(difficulty, 1, 10, 0);
     difficulty--;
-    cin.ignore();
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(),'\n');
 
     NewScreen();
     AlignLeft("Your answers should be no longer than 38 characters!\n");
@@ -958,9 +989,12 @@ void NewQuestion (Question &q) {
     string categoryID;
     int i = 0;
 
-    categoryFile.open (category + ".txt", ios::in);
-    if (!categoryFile.is_open())
+    categoryFile.open (category, ios::in);
+    if (!categoryFile.is_open()) {
+        AlignCenter("Unexpected error, the question was not written!");
+        pause("Press any key to return to main menu...");
         return;
+    }
 
     while (getline(categoryFile, line)){
         if (line[4] != 42 && line[4] != 32) { //Skips lines with "*" or space
@@ -969,7 +1003,7 @@ void NewQuestion (Question &q) {
             i = 5;
 
             while(line[i] != '/') {
-                IDNumber = IDNumber*10 + int(line[i]) - 48;
+                IDNumber = IDNumber * 10 + int(line[i]) - 48;
                 i++;
             }
             if (newID < IDNumber) {
@@ -979,11 +1013,17 @@ void NewQuestion (Question &q) {
     }
 
     newID++;
-    categoryFile.close();
-    categoryFile.open (category + ".txt", ios::out | ios::app);
+    if(categoryFile.is_open())
+        categoryFile.close();
+
+    categoryFile.open (category, ios::out | ios::app);
     if(!categoryFile.is_open())
         return;
-
+    /* uncomment if you want to see how the question will look like in file
+    cout << difficulty << "." << categoryID << newID << "/" << q.question << q.trueAns << "/"
+                 << q.ans1 << "/" << q.ans2 << "/" << q.ans3 << "/" << endl;
+    pause();
+    */
     categoryFile << difficulty << "." << categoryID << newID << "/" << q.question << q.trueAns << "/"
                  << q.ans1 << "/" << q.ans2 << "/" << q.ans3 << "/" << "\n";
 

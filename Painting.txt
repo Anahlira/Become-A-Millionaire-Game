@@ -1,17 +1,19 @@
 0.011/Who painted "Mona Lisa"?Leonardo da Vinci/Thor/Boiko Borisov/Britney Spears/
 0.012/How to get green color?blue + yellow/red + blue/you can't/black + white/
-1.013/What represent the picture, titled "The Scream", by Edvard Munch?a screeaming man/something/bird/chiken/
-2.014/Question with difficulty three?true/something/bird/chiken/
-3.015/Question with difficulty four?true/something/bird/chiken/
-4.016/Which painting, from Jean-Michel Basquiat, costs  $110.5 Million?Untitled/something/bird/chiken/
-5.017/Question with difficulty six?true/something/bird/chiken/
-6.018/What is the title of this 1863 work by Édouard Manet which is seen as a major influence on the Impressionist movement?The Luncheon on the Grass/Nude with Food/The Picnic in the Park/Nude with Friends/
-6.0116/Painted in 1888 The Swineherd, Brittany was created by Paul Gauguin. In which style of modern art was Gauguin a pioneer?Synthetism/Cubism/Impressionism/Surrealism/
-7.019/Question with difficulty 8?true/something/bird/chiken/
-7.0110/Question with 8 difficulty?true/something/bird/chiken/
-8.0111/Some suuper hard question?true/something/bird/chiken/
-8.0112/nine2?true/something/bird/chiken/
-9.0113/some?true/something/bird/chiken/
-9.0114/Super hardy questy?true/cats/dogos/cyberpunck/
-1.0115/Gde e vitosha?true/something/bird/chiken/
-6.0117/When was The synthetic paint first used?1940s/1950s/2000s/1900s/
+0.013/How much are the prime colors?three/twelve/endless/two/
+0.0119/What animal often symbolizes peace in art?dove/deer/duck/dog/
+1.014/Which of these is a paint made from pigments and plastic?acrylic/acetone/gesso/tempera/
+1.015/What represent the picture, titled "The Scream", by Edvard Munch?a screeaming man/something/bird/chiken/
+2.016/Question with difficulty three?true/something/bird/chiken/
+2.017/Early photographers made their images on which of these materials?glass/plastic/paper/stone/
+3.018/Who painted "The Starry Night"?Vincent van Gogh/Pierre-Auguste/Georges/Paul/
+4.019/Which painting, from Jean-Michel Basquiat, costs  $110.5 Million?Untitled/something/bird/chiken/
+5.0110/To which artistic movement dose Paul Gauguin's "The Yellow Christ" belong?cloisonnism/Bauhaus/impresssionism/fauvism/
+6.0111/What is the title of this 1863 work by Edouard Manet which is seen as a major influence on the Impressionist movement?The Luncheon on the Grass/Nude with Food/The Picnic in the Park/Nude with Friends/
+6.0112/Painted in 1888 The Swineherd, Brittany was created by Paul Gauguin. In which style of modern art was Gauguin a pioneer?Synthetism/Cubism/Impressionism/Surrealism/
+7.0113/When was The synthetic paint first used?1940s/1950s/2000s/1900s/
+7.0114/What does the Venus of Brassempouy represent?a woman's head/a human figure/an old man/an angel/
+8.0115/What is the type of painting technique done by mixing pigments with hot liquid wax?Encaustic painting/something/bird/chiken/
+8.0116/Which architect founded the Bauhaus school of design?Walter Gropius/Frank Gehry/I.M Pei/Frank Lloyd Wright/
+9.0117/What was the subject of the earliest known paintings?animals/flowers/sports/landscapes/
+9.0118/Which sculptor is best known for his colossal Statue of Freedom?Thomas Crawford/Horatio Greenough/Clark Mills/Hiram Powers/

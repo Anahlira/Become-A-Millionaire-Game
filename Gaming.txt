@@ -1,27 +1,26 @@
-4.041/What was the first commercially successful video game?Pong/Mario/Scrable/Pokemon/
-9.042/What year was the Super Nintendo Entertainment System (SNES) released?1991/2010/1950/1984/
-8.043/What year was Nintendo founded?1889/1950/2000/1864/
-0.044/Blizzard Entertainment is most well known for what video game franchise?World of Warcraft/Sims/Skyrim/Fortnite/
-***************************************************************************************
-6.046/How many American households play video games?two-thirds/only 10%/half/70%/
-1.047/What is the name of the first video game to be played in outer space?Starcraft/No Man's Sky/Warframe/Among Us/
-2.048/What video game franchise has racked up over 1 Billion dollars in lawsuits?Grand Theft Auto/Witcher 3/Assasin's Creed/Warcraft 3/
-8.049/What was Steve Wozniak (co-founder of Apple's) favorite game?Tetris/Mario/Starcraft/Pac-Man/
-6.0410/In the original "Legend of Zelda" game, why was the maximum amount of Rupees set at 255?Capacity restraints of integer values/They liked the number/You should be poor in the game/That is the maximum inventory/
-3.0411/What planet is most similar to the scalable size of the Minecraft world?Neptune/Earth/Pluto/Sun/
-5.0412/How many people sing in the opening song to Skyrim?30/90/120/12/
-7.0413/What is the name of the video game designed to treat depression?SPARX/Bugsnax/Stardew Valley/Sims/
-7.0414/What is the highest-grossing movie based on a video game?Detective Pikachu (Pokemon)/Tomb Raider/Hitman/Sonic the Hedgehog /
-9.0415/What Is The Name Of The Final Course In All "Mario Kart" Videogames?Rainbow Road/Ribbon Road/Music Park/Maple Treeway/
-9.0416/How Long Has Cyberpunk 2077 Been In Development?Seven/One/Five/Three/
-1.0417/When Was The First Call Of Duty Game Released?2003/1988/2000/2008/
-0.0418/What is the object that opposing players must destroy in order to win at "League of Legends"?Nexus/Tower/Tent/Castle/
-6.0419/How much money does the average player spend on "Fortnite"?60$/15$/30$/80$/
-1.0420/The original designer behind the game "Tetris" is from which nation?Russia/Bulgaria <3/Japan/USA/
-2.0421/What is the name of the primary world upon which the "World of Warcraft" takes place?Azeroth/Kalimdor/Eastern Kingdoms/Pandaria/
-3.0422/What is the name of the first videogame in the "Warcraft" series?Orcs & Humans/Frozen Throne/Reforged/Tides of Darkness/
-5.0423/Nintendo began as a company selling which products?Playing cards/Video Games/Board games/TV's/
-6.0424/The classic Atari 2600 game controller has how many buttons?Only 1/Only 2/Four/Eight/
-4.0425/The Nintendo Game Boy utilized which type of display system?LCD/OLED/IPS-LCD/AMOLED/
-0.045/Mario originated as a character in which classic videogame?Donkey Kong/Mario Bros/Pokemon/Minecraft/
-7.0426/What videogame featured the first Easter egg?Adventure/Sonic the Hedgehog/Dune II/Tomb Raider/
+4.041/What was the first commercially successful video game?Pong|Mario|Scrable|Pokemon|
+9.042/What year was the Super Nintendo Entertainment System (SNES) released?1991|2010|1950|1984|
+8.043/What year was Nintendo founded?1889|1950|2000|1864|
+0.044/Blizzard Entertainment is most well known for what video game franchise?World of Warcraft|Sims|Skyrim|Fortnite|
+6.046/How many American households play video games?two-thirds|only 10%|half|70%|
+1.047/What is the name of the first video game to be played in outer space?Starcraft|No Man's Sky|Warframe|Among Us|
+2.048/What video game franchise has racked up over 1 Billion dollars in lawsuits?Grand Theft Auto|Witcher 3|Assasin's Creed|Warcraft 3|
+8.049/What was Steve Wozniak (co-founder of Apple's) favorite game?Tetris|Mario|Starcraft|Pac-Man/
+6.0410/In the original "Legend of Zelda" game, why was the maximum amount of Rupees set at 255?Capacity restraints|They liked the number|You should be poor in the game|That is the maximum inventory|
+3.0411/What planet is most similar to the scalable size of the Minecraft world?Neptune|Earth|Saturn|Sun|
+5.0412/How many people sing in the opening song to Skyrim?30|90|120|12|
+7.0413/What is the name of the video game designed to treat depression?SPARX|Bugsnax|Stardew Valley|Sims|
+7.0414/What is the highest-grossing movie based on a video game?Detective Pikachu (Pokemon)|Tomb Raider|Hitman|Sonic the Hedgehog|
+9.0415/What Is The Name Of The Final Course In All "Mario Kart" Videogames?Rainbow Road|Ribbon Road|Music Park|Maple Treeway|
+9.0416/How Long Has Cyberpunk 2077 Been In Development?Seven|One|Five|Three|
+1.0417/When Was The First Call Of Duty Game Released?2003|1988|2000|2008|
+0.0418/What is the object that opposing players must destroy in order to win at "League of Legends"?Nexus|Tower|Tent|Castle|
+6.0419/How much money does the average player spend on "Fortnite"?60$|15$|30$|80$|
+1.0420/The original designer behind the game "Tetris" is from which nation?Russia|Bulgaria <3|Japan|USA|
+2.0421/What is the name of the primary world upon which the "World of Warcraft" takes place?Azeroth|Kalimdor|Eastern Kingdoms|Pandaria|
+3.0422/What is the name of the first videogame in the "Warcraft" series?Orcs & Humans|Frozen Throne|Reforged|Tides of Darkness|
+5.0423/Nintendo began as a company selling which products?Playing cards|Video Games|Board games|TV's|
+6.0424/The classic Atari 2600 game controller has how many buttons?Only 1|Only 2|Four|Eight|
+4.0425/The Nintendo Game Boy utilized which type of display system?LCD|OLED|IPS-LCD|AMOLED|
+0.045/Mario originated as a character in which classic videogame?Donkey Kong|Mario Bros|Pokemon|Minecraft|
+7.0426/What videogame featured the first Easter egg?Adventure|Sonic the Hedgehog|Dune II|Tomb Raider|

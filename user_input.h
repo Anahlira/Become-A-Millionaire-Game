@@ -23,4 +23,4 @@ using namespace std;
 
 void UserInput (int& userAnswer, const int minValue = 1, const int maxValue = 4, const int center = 35);
 bool ChooseLifeline (bool lifelines[], int& userAnswer);
-string WriteAnswer (string text = "Enter true answer: ", const string errorText = "You didn't write the answer within the limitation!\n", const int limitation = 38);
+string WriteAnswer (string text = "Enter true answer: ", const string errorText = "You didn't write the answer within the limitation!\n", const size_t limitation = 38);

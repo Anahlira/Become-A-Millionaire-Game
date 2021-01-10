@@ -149,7 +149,7 @@ void ChangeQuestion(Question &q, const int topBorder, const int bottomBorder, co
                 getline(cin, text);
 
                 q.question = text;
-                for(int i = 0; i <= text.length(); i++){
+                for(size_t i = 0; i <= text.length(); i++){
                     if (text[i] != '?')
                         q.question[i] = text[i];
                     else {
@@ -192,7 +192,7 @@ void ChangeQuestion(Question &q, const int topBorder, const int bottomBorder, co
     //changeCategory.clear();
     changeCategory.seekp(gotoS);
 
-    for(int i = 0; i < question.length(); i++)
+    for(size_t i = 0; i < question.length(); i++)
                 changeCategory << "*";
     changeCategory << endl;
 

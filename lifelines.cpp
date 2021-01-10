@@ -115,8 +115,6 @@ void ActivateLifeline (int userAnswer, int difficulty, Question &q){
             break;
 
         case 3:
-            char st[1];
-            st[0] = 220;
 
             //....percentage of the vote....//
             string a,b,c,d;
@@ -144,7 +142,7 @@ void ActivateLifeline (int userAnswer, int difficulty, Question &q){
 
             int percentage = 0;
             int usePr[3];
-            int longestAns = 0;
+            size_t longestAns = 0;
             int randMax = 0;
 
             for (int j = 0; j < 4; j++) {
@@ -182,14 +180,14 @@ void ActivateLifeline (int userAnswer, int difficulty, Question &q){
             for(int j = 0; j < 4; j++) {
                 if(answerS[j] == answer) {
                     cout << answer << ": ";
-                    for(int i = answer.length(); i < longestAns; i++)
+                    for(size_t i = answer.length(); i < longestAns; i++)
                         cout << " ";
 
                     Border(220, percentage);
                 }
                 else {
                     cout << answerS[j] << ": ";
-                    for(int i = answerS[j].length(); i < longestAns; i++)
+                    for(size_t i = answerS[j].length(); i < longestAns; i++)
                         cout << " ";
 
                     Border(220, usePr[z]);

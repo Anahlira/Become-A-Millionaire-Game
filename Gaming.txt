@@ -5,7 +5,7 @@
 6.046/How many American households play video games?two-thirds|only 10%|half|70%|
 1.047/What is the name of the first video game to be played in outer space?Starcraft|No Man's Sky|Warframe|Among Us|
 2.048/What video game franchise has racked up over 1 Billion dollars in lawsuits?Grand Theft Auto|Witcher 3|Assasin's Creed|Warcraft 3|
-8.049/What was Steve Wozniak (co-founder of Apple's) favorite game?Tetris|Mario|Starcraft|Pac-Man/
+8.049/What was Steve Wozniak (co-founder of Apple's) favorite game?Tetris|Mario|Starcraft|Pac-Man|
 6.0410/In the original "Legend of Zelda" game, why was the maximum amount of Rupees set at 255?Capacity restraints|They liked the number|You should be poor in the game|That is the maximum inventory|
 3.0411/What planet is most similar to the scalable size of the Minecraft world?Neptune|Earth|Saturn|Sun|
 5.0412/How many people sing in the opening song to Skyrim?30|90|120|12|

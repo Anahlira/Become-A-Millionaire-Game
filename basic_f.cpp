@@ -12,7 +12,6 @@
 * <file with helpful functions>
 *
 */
-#pragma once
 
 #include "fuctions.h"
 #include "visual_functions.h"

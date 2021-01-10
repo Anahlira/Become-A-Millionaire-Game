@@ -15,7 +15,7 @@
 #include "visual_functions.h"
 
 void LetterByLetter(const string text, const int time) {
-    for (int i = 0; i < text.length(); i++) {
+    for (size_t i = 0; i < text.length(); i++) {
         cout << text[i];
         usleep(time);
     }
@@ -74,7 +74,6 @@ void AlignCenter (const string text, const int characterBorder1, const int chara
 }
 
 void AlignLeft (const string text, const int characterBorder1, const int characterBorder2, const int time, const int character) {
-    int length = text.length();
     char st[3];
     st[0] = character;
     st[1] = characterBorder1;

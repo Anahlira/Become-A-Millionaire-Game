@@ -73,7 +73,7 @@ bool ChooseLifeline (bool lifelines[], int& userAnswer) {
     return 1;
 }
 
-string WriteAnswer (string text, const string textError, const int limitation) {
+string WriteAnswer (string text, const string textError, const size_t limitation) {
     string answer;
     while (true) {
         AlignLeft (text);
